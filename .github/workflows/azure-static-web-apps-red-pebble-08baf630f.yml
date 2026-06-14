@@ -1,14 +1,11 @@
 name: Azure Static Web Apps CI/CD
 
-# Híbrido: nosso build Vite + OIDC no padrão da Azure.
+# Esteira simples: SWA standalone (não linkada com GitHub) + build Vite.
 #
-# Por que OIDC? A SWA está com Provider: GitHub (linkada ao repo na criação),
-# e nesse modo o backend exige OIDC federated identity — só api_token não basta.
-#
-# Por que nosso build? O auto-build da Azure (Oryx) usa output_location "build"
-# (default CRA) e falha com Vite. Construímos no runner com output em dist/.
-#
-# Resultado: skip_app_build=true + app_location=dist + OIDC.
+# - Nosso build (Node 20 + npm ci + npm run build) gera dist/
+# - Deploy via Azure/static-web-apps-deploy@v1 com api_token
+# - skip_app_build: true pula Oryx (que tentaria usar output_location "build")
+# - OIDC não é necessário em SWA standalone (Provider: None)
 
 on:
   push:
@@ -25,59 +22,34 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
-    permissions:
-      id-token: write
-      contents: read
     steps:
-      # 1. Checkout
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: false
           lfs: false
 
-      # 2. Setup Node 20 com cache de npm
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      # 3. Instala deps respeitando package-lock
       - name: Install dependencies
         run: npm ci
 
-      # 4. Build (Vite → dist/)
       - name: Build
         run: npm run build
 
-      # 5. OIDC token — padrão EXATO da Azure (auto-gen):
-      #    instala @actions/core@1.6.0 manualmente + usa github-script@v6.
-      #    Esse pattern é o que funciona com SWA linkada.
-      - name: Install OIDC Client from Core Package
-        run: npm install @actions/core@1.6.0 @actions/http-client
-
-      - name: Get Id Token
-        uses: actions/github-script@v6
-        id: idtoken
-        with:
-          script: |
-            const coredemo = require('@actions/core')
-            return await coredemo.getIDToken()
-          result-encoding: string
-
-      # 6. Deploy via Azure/static-web-apps-deploy@v1 com BOTH api_token + OIDC
-      - name: Build And Deploy
-        id: builddeploy
+      - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_PEBBLE_08BAF630F }}
-          github_id_token: ${{ steps.idtoken.outputs.result }}
           action: 'upload'
-          app_location: 'dist'      # nosso build pré-pronto
-          api_location: ''          # sem backend
-          output_location: ''       # já buildado, output_location ignorado
-          skip_app_build: true      # pula Oryx (que tenta usar output "build")
+          app_location: 'dist'
+          api_location: ''
+          output_location: ''
+          skip_app_build: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -85,7 +57,6 @@ jobs:
     name: Close Pull Request Job
     steps:
       - name: Close Pull Request
-        id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_PEBBLE_08BAF630F }}
