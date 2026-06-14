@@ -1,14 +1,14 @@
 name: Azure Static Web Apps CI/CD
 
-# Esteira simples e determinística:
-# 1. checkout
-# 2. setup Node 20 + cache npm
-# 3. npm ci + npm run build (Vite gera em dist/)
-# 4. deploy do dist/ direto, com skip_app_build=true (pula Oryx)
+# Híbrido: nosso build Vite + OIDC no padrão da Azure.
 #
-# Por que skip_app_build? O auto-build da Azure (Oryx) detecta Vite
-# inconsistentemente e usa output_location "build" (default CRA) em
-# vez de "dist" (Vite). Construindo aqui mesmo evita esses problemas.
+# Por que OIDC? A SWA está com Provider: GitHub (linkada ao repo na criação),
+# e nesse modo o backend exige OIDC federated identity — só api_token não basta.
+#
+# Por que nosso build? O auto-build da Azure (Oryx) usa output_location "build"
+# (default CRA) e falha com Vite. Construímos no runner com output em dist/.
+#
+# Resultado: skip_app_build=true + app_location=dist + OIDC.
 
 on:
   push:
@@ -21,10 +21,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_deploy:
+  build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy
+    name: Build and Deploy Job
+    permissions:
+      id-token: write
+      contents: read
     steps:
       # 1. Checkout
       - name: Checkout
@@ -33,14 +36,14 @@ jobs:
           submodules: false
           lfs: false
 
-      # 2. Setup Node 20 com cache
+      # 2. Setup Node 20 com cache de npm
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      # 3. Instala deps respeitando o package-lock
+      # 3. Instala deps respeitando package-lock
       - name: Install dependencies
         run: npm ci
 
@@ -48,42 +51,41 @@ jobs:
       - name: Build
         run: npm run build
 
-      # 5. DEBUG: valida que o secret está sendo lido
-      - name: Validate deployment token
-        env:
-          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_PEBBLE_08BAF630F }}
-        run: |
-          if [ -z "$SWA_CLI_DEPLOYMENT_TOKEN" ]; then
-            echo "::error::Secret AZURE_STATIC_WEB_APPS_API_TOKEN_RED_PEBBLE_08BAF630F está VAZIO ou não existe."
-            echo "Vai em https://github.com/SolutionCenter4Sys/Sono_AI/settings/secrets/actions"
-            echo "e confirma que o secret existe com ESSE nome exato."
-            exit 1
-          fi
-          LEN=${#SWA_CLI_DEPLOYMENT_TOKEN}
-          PREFIX=$(echo "$SWA_CLI_DEPLOYMENT_TOKEN" | cut -c1-4)
-          SUFFIX=$(echo "$SWA_CLI_DEPLOYMENT_TOKEN" | rev | cut -c1-4 | rev)
-          echo "✓ Token carregado: $LEN caracteres, começa com '$PREFIX...' e termina com '...$SUFFIX'"
-          echo "  Tokens SWA típicos têm 60-90 caracteres."
+      # 5. OIDC token — padrão EXATO da Azure (auto-gen):
+      #    instala @actions/core@1.6.0 manualmente + usa github-script@v6.
+      #    Esse pattern é o que funciona com SWA linkada.
+      - name: Install OIDC Client from Core Package
+        run: npm install @actions/core@1.6.0 @actions/http-client
 
-      # 6. Deploy via SWA CLI direto
-      - name: Install SWA CLI
-        run: npm install -g @azure/static-web-apps-cli
+      - name: Get Id Token
+        uses: actions/github-script@v6
+        id: idtoken
+        with:
+          script: |
+            const coredemo = require('@actions/core')
+            return await coredemo.getIDToken()
+          result-encoding: string
 
-      - name: Deploy to Static Web Apps
-        env:
-          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_PEBBLE_08BAF630F }}
-        run: |
-          swa deploy ./dist \
-            --deployment-token "$SWA_CLI_DEPLOYMENT_TOKEN" \
-            --env production \
-            --verbose silly
+      # 6. Deploy via Azure/static-web-apps-deploy@v1 com BOTH api_token + OIDC
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_PEBBLE_08BAF630F }}
+          github_id_token: ${{ steps.idtoken.outputs.result }}
+          action: 'upload'
+          app_location: 'dist'      # nosso build pré-pronto
+          api_location: ''          # sem backend
+          output_location: ''       # já buildado, output_location ignorado
+          skip_app_build: true      # pula Oryx (que tenta usar output "build")
 
-  close_pull_request:
+  close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
-    name: Close Pull Request
+    name: Close Pull Request Job
     steps:
       - name: Close Pull Request
+        id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_PEBBLE_08BAF630F }}
