@@ -4,6 +4,16 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 
 O formato segue [Keep a Changelog](https://keepachangelog.com/) e este projeto adere a [Semantic Versioning](https://semver.org/).
 
+## [0.1.2] — 2026-06-14
+
+### 📚 Docs
+
+- manual de uso do release (RELEASES.md) (`303ee6d`)
+
+### 🔧 Chore
+
+- initial commit — Protótipo Instituto do Sono (Sono AI) (`a11a86b`)
+
 ## [0.1.1] — 2026-06-14
 
 ### ✨ Features

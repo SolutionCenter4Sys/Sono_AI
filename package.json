@@ -1,7 +1,7 @@
 {
   "name": "sleepscore-web",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "SleepScore Web Prototype — Foursys × Instituto do Sono (AFIP) · CoCria 2026",
   "scripts": {
