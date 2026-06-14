@@ -48,10 +48,24 @@ jobs:
       - name: Build
         run: npm run build
 
-      # 5. Deploy via SWA CLI direto
-      # Bypassa o GitHub Action (Azure/static-web-apps-deploy@v1) que
-      # spawna container Oryx mesmo com skip_app_build=true e é frágil.
-      # `swa deploy` é a CLI oficial do Azure SWA — mais confiável.
+      # 5. DEBUG: valida que o secret está sendo lido
+      - name: Validate deployment token
+        env:
+          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_PEBBLE_08BAF630F }}
+        run: |
+          if [ -z "$SWA_CLI_DEPLOYMENT_TOKEN" ]; then
+            echo "::error::Secret AZURE_STATIC_WEB_APPS_API_TOKEN_RED_PEBBLE_08BAF630F está VAZIO ou não existe."
+            echo "Vai em https://github.com/SolutionCenter4Sys/Sono_AI/settings/secrets/actions"
+            echo "e confirma que o secret existe com ESSE nome exato."
+            exit 1
+          fi
+          LEN=${#SWA_CLI_DEPLOYMENT_TOKEN}
+          PREFIX=$(echo "$SWA_CLI_DEPLOYMENT_TOKEN" | cut -c1-4)
+          SUFFIX=$(echo "$SWA_CLI_DEPLOYMENT_TOKEN" | rev | cut -c1-4 | rev)
+          echo "✓ Token carregado: $LEN caracteres, começa com '$PREFIX...' e termina com '...$SUFFIX'"
+          echo "  Tokens SWA típicos têm 60-90 caracteres."
+
+      # 6. Deploy via SWA CLI direto
       - name: Install SWA CLI
         run: npm install -g @azure/static-web-apps-cli
 
