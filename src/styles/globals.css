@@ -1,0 +1,69 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+ * Foursys tokens — HSL values (without hsl() wrapper so we can
+ * use Tailwind's alpha syntax: hsl(var(--marinho-deep) / 0.5).
+ * ============================================================ */
+
+@layer base {
+  /* Default — Dark theme (Foursys · Instituto do Sono) */
+  :root {
+    --marinho-deep:  240 33% 12%;   /* #15152A */
+    --marinho:       240 25% 18%;   /* #222239 */
+    --surface:       240 24% 22%;   /* #2A2A45 */
+    --surface-2:     240 19% 26%;   /* #363650 */
+
+    --laranja:        16 100% 54%;  /* #FF5315 */
+    --baunilha:       38 100% 83%;  /* #FFE2A9 */
+    --menta:         170  25% 63%;  /* #89BAB1 */
+
+    --risk-low:      148  58% 44%;  /* #2EB06F */
+    --risk-moderate:  36  86% 55%;  /* #EF9F27 */
+    --risk-high:      16 100% 54%;  /* #FF5315 */
+    --risk-critical:   0  71% 53%;  /* #DE3232 */
+
+    --text-primary:    0   0% 100%; /* #FFFFFF */
+    --text-on-brand:   0   0% 100%; /* sempre branco */
+    --sun-moon:       38 100% 83%;  /* #FFE2A9 — decorativo warm */
+  }
+
+  /* Light theme — ativado via [data-theme="light"] no <html> */
+  [data-theme='light'] {
+    --marinho-deep:   45  33% 95%;  /* #F6F4EE */
+    --marinho:        46  31% 89%;  /* #EBE6D9 */
+    --surface:         0   0% 100%; /* #FFFFFF */
+    --surface-2:      43  27% 80%;  /* #D9D2C0 */
+
+    --laranja:        17 100% 45%;  /* #E54200 */
+    --baunilha:       43  21% 34%;  /* #695F44 */
+    --menta:         168  32% 36%;  /* #3F7A6E */
+
+    --risk-low:      150  63% 33%;  /* #1F8A55 */
+    --risk-moderate:  37  84% 39%;  /* #B87510 */
+    --risk-high:      19 100% 39%;  /* #C53D00 */
+    --risk-critical:   0  66% 38%;  /* #A12121 */
+
+    --text-primary:  240  33% 12%;  /* #15152A — ink escuro */
+    --text-on-brand:   0   0% 100%; /* segue branco em CTAs Laranja */
+    --sun-moon:       36  86% 69%;  /* #F4C36B — dourado */
+  }
+
+  html, body {
+    background-color: hsl(var(--marinho-deep));
+    color: hsl(var(--text-primary));
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+  }
+}

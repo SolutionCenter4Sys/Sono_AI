@@ -1,0 +1,48 @@
+node_modules
+dist
+.vite
+*.log
+.DS_Store
+
+# Backups do .git anterior (migração de conta)
+.git-backup-*
+.env
+.env.local
+.env.*.local
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Arquivos de contexto do Claude / scaffolding de sessão (não versionar)
+.claude/
+CLAUDE_CONTEXT.md
+HANDOFF_*.md
+
+# TechDay / material de apresentação (binários grandes, não versionar)
+docs/Briefing_TechDay_CoCria_2026.docx
+docs/InstitutoSono_TechDay_v1.pptx
+docs/InstitutoSono_TechDay_v1.backup-*.pptx
+docs/Template_TechDay_CoCria_2026.pptx
+docs/screenshots/
+docs/material_de_apoio/
+
+# Lock files do Office quando arquivos estão abertos
+~$*.pptx
+~$*.docx
+~$*.xlsx
+
+# Infra (Terraform) — não versionar enquanto for PoC
+terraform/
+
+# Deploy doc — vive local enquanto não validamos no Azure
+docs/deploy_azure.md
+
+# Token do SWA (gerado por `terraform output`)
+deploy_token.txt
+
+# Zips de release (artefatos do scripts/release.mjs — vão pro GitHub release)
+sleepscore-v*.zip
