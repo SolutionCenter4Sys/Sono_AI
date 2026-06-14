@@ -4,6 +4,12 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 
 O formato segue [Keep a Changelog](https://keepachangelog.com/) e este projeto adere a [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] — 2026-06-14
+
+### ✨ Features
+
+- jornada pós-laudo com retornos híbridos (ADR-028) (`42cd9c5`)
+
 ## [0.1.2] — 2026-06-14
 
 ### 📚 Docs
