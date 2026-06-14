@@ -9,6 +9,7 @@ import {
   FileText,
   MessageSquare,
   CalendarDays,
+  CalendarClock,
   X,
   Download,
   Mail,
@@ -223,6 +224,53 @@ export default function DiagnosisScreen() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* === PLANO DE ACOMPANHAMENTO (ADR-028) === */}
+        <section
+          className="mt-3 rounded-card border p-5"
+          style={{
+            backgroundColor: 'hsl(var(--sun-moon) / 0.08)',
+            borderColor: 'hsl(var(--sun-moon) / 0.28)',
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <span
+              className="grid h-6 w-6 place-items-center rounded-lg"
+              style={{ backgroundColor: 'hsl(var(--sun-moon) / 0.22)' }}
+            >
+              <CalendarClock size={12} className="text-sun-moon" />
+            </span>
+            <span className="text-[11px] font-semibold uppercase tracking-kicker text-sun-moon">
+              Plano de acompanhamento
+            </span>
+          </div>
+          <p className="mt-3 text-[13px] leading-[1.5] text-text-primary/85">
+            Você terá retornos automaticamente agendados pelo Instituto. Se os dados do
+            seu relógio indicarem deterioração, o sistema antecipa o próximo retorno.
+          </p>
+          <div className="mt-3 space-y-2">
+            {[
+              { label: 'D+30', sub: 'Titulação do CPAP' },
+              { label: 'D+90', sub: 'Reavaliação de aderência' },
+              { label: 'D+180', sub: 'Manutenção do tratamento' },
+              { label: 'Anual', sub: 'Reavaliação completa' },
+            ].map((step) => (
+              <div key={step.label} className="flex items-center gap-3 rounded-card bg-marinho-deep/30 p-2.5">
+                <span className="w-14 shrink-0 text-center text-[11px] font-bold text-sun-moon">
+                  {step.label}
+                </span>
+                <span className="text-[12.5px] text-text-primary/85">{step.sub}</span>
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate('/acompanhamento')}
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-button bg-sun-moon/16 py-2.5 text-[13px] font-semibold text-sun-moon"
+          >
+            Ver acompanhamento completo →
+          </button>
         </section>
 
         {/* === O QUE CADA NÚMERO SIGNIFICA === */}

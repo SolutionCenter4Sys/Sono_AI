@@ -524,6 +524,57 @@ Convenção de ID:
 - Copy diferente: o algorítmico fala em "sinais", o pós-consulta fala em "achados consolidados"
 - ADR-024 registra a distinção
 
+### WEB-EP-09-FT-05 · Acompanhamento pós-laudo (em curso · ADR-028)
+
+> Fecha o loop clínico: depois do laudo, paciente entra em jornada de retornos híbridos (temporal + clínico). Sistema antecipa retornos automaticamente quando dados pioram.
+
+#### WEB-EP-09-FT-05-US-01 · Tela /acompanhamento (hub)
+**Como** paciente em tratamento, **quero** uma tela central que mostre meu próximo retorno e timeline completa, **para que** eu acompanhe a evolução sem precisar lembrar de datas.
+
+**Critério de aceite:**
+- Hero "Próximo retorno em N dias" com badge temporal (menta) ou antecipado (laranja)
+- Timeline vertical: retornos concluídos + próximo destacado + futuros pending
+- Card aderência ao tratamento (CPAP horas/noite, hábitos)
+- Card evolução clínica (AHI, Sleep Score, mini-gráfico)
+
+#### WEB-EP-09-FT-05-US-02 · Tela /acompanhamento/retorno/:id
+**Como** paciente, **quero** ver o detalhe de cada retorno (passado ou futuro) incluindo pré-consulta automatizada, **para que** eu chegue preparado e o médico tenha contexto.
+
+**Critério de aceite:**
+- Para retornos passados: resumo das decisões + métricas do dia
+- Para o próximo: comparativo "último retorno vs agora", questionário pré-preenchido, gatilho clínico explicado (se aplicável)
+
+#### WEB-EP-09-FT-05-US-03 · Antecipação automática
+**Como** paciente em CPAP, **quero** que o sistema antecipe meu retorno quando dados pioram, **para que** eu não fique esperando.
+
+**Critério de aceite:**
+- Gatilhos mock (aderência < 70% por 14d; AHI > 15 por 7n; Sleep Score cai 8pts em 7d)
+- Próximo retorno temporal vira "antecipado" para D+14 à frente
+- Badge "ANTECIPADO POR DADOS CLÍNICOS" + motivo
+
+#### WEB-EP-09-FT-05-US-04 · Card na PatientHome
+**Como** paciente, **quero** ver "Próximo retorno em N dias" na Home, **para que** eu não esqueça.
+
+**Critério de aceite:**
+- Card condicional (aparece quando retorno em ≤ 30 dias)
+- Badge temporal/antecipado, CTA "Ver acompanhamento"
+
+#### WEB-EP-09-FT-05-US-05 · Bloco no laudo
+**Como** paciente lendo o laudo, **quero** ver o calendário de retornos planejados, **para que** eu já saiba o que vem depois.
+
+**Critério de aceite:**
+- Bloco após "Condutas recomendadas" em DiagnosisScreen
+- Mini-timeline (D+30, D+90, D+180, anual) com datas calculadas
+- CTA "Ver acompanhamento completo"
+
+#### WEB-EP-09-FT-05-US-06 · Portal Médico /medico/retornos
+**Como** médico, **quero** ver a agenda de retornos do dia com prévia do paciente, **para que** eu chegue preparado.
+
+**Critério de aceite:**
+- Lista de retornos hoje com paciente, badge temporal/antecipado
+- Card de prévia: aderência, AHI atual, comparativo último retorno
+- Link para o pré-laudo HITL
+
 ---
 
 ## WEB-EP-10 · Triagem clínica detalhada (Figma — 5ª onda, futura)

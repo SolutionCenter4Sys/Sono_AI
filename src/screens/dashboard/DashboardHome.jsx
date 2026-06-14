@@ -95,6 +95,9 @@ const EPICS = [
       ['/score/historico', '08.4 Histórico de noites'],
       ['/score/regua-whatsapp', '08.5 Régua WhatsApp'],
       ['/pre-diagnostico', '08.6 Pré-diagnóstico algorítmico'],
+      ['/acompanhamento', '08.7 Acompanhamento (hub)'],
+      ['/acompanhamento/retorno/r-d150', '08.8 Próximo retorno (antecipado)'],
+      ['/acompanhamento/retorno/r-d90', '08.9 Retorno concluído (D+90)'],
     ],
   },
   {
@@ -157,6 +160,7 @@ const EPICS = [
       ['/medico/agenda', '10.3 Agenda médica'],
       ['/medico/laudo', '10.4 Laudo HITL + FHIR'],
       ['/medico/dashboard', '10.5 Dashboard KPIs'],
+      ['/medico/retornos', '10.6 Retornos do dia'],
     ],
   },
 ];

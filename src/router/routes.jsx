@@ -88,8 +88,13 @@ import DeviceScreen from '@/screens/dispositivo/DeviceScreen.jsx';
 // Pré-diagnóstico algorítmico (ADR-024)
 import PreDiagnosisAlertScreen from '@/screens/pre-diagnostico/PreDiagnosisAlertScreen.jsx';
 
+// Acompanhamento pós-laudo (ADR-028)
+import AcompanhamentoScreen from '@/screens/acompanhamento/AcompanhamentoScreen.jsx';
+import ReturnDetailScreen from '@/screens/acompanhamento/ReturnDetailScreen.jsx';
+
 // Portal Médico (desktop)
 import CadastroScreen from '@/screens/medico/CadastroScreen.jsx';
+import RetornosScreen from '@/screens/medico/RetornosScreen.jsx';
 import TriagemReviewScreen from '@/screens/medico/TriagemReviewScreen.jsx';
 import AgendaScreen from '@/screens/medico/AgendaScreen.jsx';
 import LaudoScreen from '@/screens/medico/LaudoScreen.jsx';
@@ -181,6 +186,10 @@ export default function AppRoutes() {
         {/* Pré-diagnóstico algorítmico (ADR-024) */}
         <Route path="/pre-diagnostico" element={<PreDiagnosisAlertScreen />} />
 
+        {/* Acompanhamento pós-laudo (ADR-028) */}
+        <Route path="/acompanhamento" element={<AcompanhamentoScreen />} />
+        <Route path="/acompanhamento/retorno/:id" element={<ReturnDetailScreen />} />
+
         {/* Exame & Laudo */}
         <Route path="/exame/consulta" element={<ConsultationScreen />} />
         <Route path="/exame/pre-diagnostico" element={<PreDiagnosisScreen />} />
@@ -203,6 +212,7 @@ export default function AppRoutes() {
         <Route path="/medico/agenda" element={<AgendaScreen />} />
         <Route path="/medico/laudo" element={<LaudoScreen />} />
         <Route path="/medico/dashboard" element={<DashboardScreen />} />
+        <Route path="/medico/retornos" element={<RetornosScreen />} />
       </Route>
 
       {/* Fallback */}

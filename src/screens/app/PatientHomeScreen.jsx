@@ -13,9 +13,11 @@ import {
   Droplet,
   Heart,
   Moon,
+  CalendarClock,
 } from 'lucide-react';
 import { DEVICE, batteryColor, statusMeta, syncRelative } from '@/data/deviceMock.js';
 import { EXAM, NIGHTS, POST_EXAM_META, progressPct, nightsCompleted } from '@/data/examMock.js';
+import { nextReturn, daysUntil, fmtBR } from '@/data/followUpMock.js';
 
 /**
  * Home pessoal do paciente (/inicio) — hub da jornada.
@@ -70,6 +72,12 @@ export default function PatientHomeScreen() {
   const postExam = POST_EXAM_META[EXAM.state]; // analyzing | reviewing | signed
   const examPct = progressPct(EXAM.currentNight, EXAM.totalNights);
   const examCompleted = nightsCompleted(NIGHTS);
+
+  // Próximo retorno — aparece quando há retorno em ≤ 60 dias (ADR-028)
+  const followUp = nextReturn();
+  const followUpDays = followUp ? daysUntil(followUp.plannedDate) : null;
+  const showFollowUp = followUp && followUpDays != null && followUpDays >= 0 && followUpDays <= 60;
+  const followUpAnticipated = followUp?.triggeredBy === 'clinical';
 
   return (
     <div className="flex h-full flex-col">
@@ -257,6 +265,62 @@ export default function PatientHomeScreen() {
               style={{ color: `hsl(var(--${postExam.color}))` }}
             >
               {postExam.cta} <ChevronRight size={14} className="ml-0.5" />
+            </div>
+          </button>
+        )}
+
+        {/* Card "Próximo retorno" (ADR-028) — aparece quando há retorno em ≤ 60 dias */}
+        {showFollowUp && (
+          <button
+            type="button"
+            onClick={() => navigate('/acompanhamento')}
+            className="w-full mb-4 text-left rounded-card-lg p-4 transition hover:brightness-110"
+            style={{
+              background: followUpAnticipated
+                ? 'linear-gradient(135deg, hsl(var(--laranja) / 0.16) 0%, hsl(var(--sun-moon) / 0.10) 100%)'
+                : 'linear-gradient(135deg, hsl(var(--menta) / 0.14) 0%, hsl(var(--sun-moon) / 0.10) 100%)',
+              border: followUpAnticipated
+                ? '1px solid hsl(var(--laranja) / 0.38)'
+                : '1px solid hsl(var(--menta) / 0.35)',
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <span
+                className="grid h-6 w-6 place-items-center rounded-lg"
+                style={{
+                  backgroundColor: followUpAnticipated
+                    ? 'hsl(var(--laranja) / 0.22)'
+                    : 'hsl(var(--menta) / 0.22)',
+                }}
+              >
+                <CalendarClock
+                  size={13}
+                  className={followUpAnticipated ? 'text-laranja' : 'text-menta'}
+                />
+              </span>
+              <span
+                className={'text-[11px] font-semibold uppercase tracking-kicker ' +
+                  (followUpAnticipated ? 'text-laranja' : 'text-menta')}
+              >
+                Próximo retorno
+              </span>
+              {followUpAnticipated && (
+                <span className="ml-auto rounded-pill bg-laranja/22 px-2 py-0.5 text-[10px] font-bold text-laranja">
+                  ANTECIPADO
+                </span>
+              )}
+            </div>
+            <p className="mt-3 text-[18px] font-bold leading-snug">
+              Em {followUpDays} dias <span className="text-baunilha/55 text-[14px]">· {fmtBR(followUp.plannedDate)}</span>
+            </p>
+            <p className="mt-1 text-[12px] text-baunilha/65">
+              {followUp.doctor} · {followUp.type}
+            </p>
+            <div
+              className={'mt-3 flex items-center justify-end text-[12.5px] font-semibold ' +
+                (followUpAnticipated ? 'text-laranja' : 'text-menta')}
+            >
+              Ver acompanhamento <ChevronRight size={14} className="ml-0.5" />
             </div>
           </button>
         )}

@@ -737,4 +737,45 @@ Falta para o paciente uma **tela dedicada do kit**, simétrica à do relógio, o
 
 ---
 
+## ADR-028 — Acompanhamento pós-laudo com retornos híbridos (temporal + clínico)
+**Data:** 2026-06-14
+**Status:** Aceito · Estende [[ADR-026]] (laudo enriquecido) e [[ADR-010]] (Sleep Score como engajamento)
+
+**Contexto:** Depois do laudo assinado, a jornada do paciente no protótipo terminava — havia botões "Agendar retorno" e "Mensagem para Dr. Marcos" no rodapé do laudo, mas nenhuma continuidade visível. Na prática clínica, apneia é doença crônica: paciente em CPAP tem retornos no protocolo D+30 (titulação), D+90 (reavaliação de aderência), D+180 (manutenção) e anual. Além disso, dados do relógio + aderência ao CPAP podem indicar piora antes do retorno programado — momento ideal pra antecipar a consulta automaticamente.
+
+**Decisão:** Implementar acompanhamento pós-laudo com **dois gatilhos de retorno coexistindo**:
+
+1. **Temporal** — calendário padrão do protocolo: D+30, D+90, D+180, anual (D+365 e depois anual indefinido). Agendado automaticamente no momento da assinatura do laudo, baseado na gravidade do diagnóstico.
+
+2. **Clínico** — antecipação automática quando os dados disparam regras:
+   - Aderência CPAP cai abaixo de 70% por 14 dias
+   - AHI parcial volta a subir acima de 15 em 7 noites consecutivas (medido pelo wearable)
+   - Sleep Score cai > 8 pontos em uma semana
+   - Quando dispara, o próximo retorno temporal é "antecipado" para 14 dias à frente, com badge "ANTECIPADO POR DADOS CLÍNICOS" e copy explicando o motivo.
+
+**Arquitetura de telas:**
+
+- **`/acompanhamento`** (novo) — hub central. Hero "Próximo retorno em X dias" (com badge temporal/antecipado), timeline vertical de TODOS os retornos (concluídos com chevron pra detalhe, próximo destacado, futuros pending), card de aderência ao tratamento (CPAP, hábitos).
+- **`/acompanhamento/retorno/:id`** (novo) — detalhe individual. Para retornos passados: resumo da consulta + decisões. Para o próximo: pré-consulta automatizada com comparativo de métricas (último retorno vs agora), questionário rápido pré-preenchido baseado em dados do wearable, gatilho clínico explicado (quando aplicável).
+- **`/medico/retornos`** (novo) — visão consolidada para o médico. Lista de retornos do dia, badge temporal/antecipado, prévia do paciente, link pro pré-laudo HITL.
+- **`PatientHomeScreen`** — card condicional "Próximo retorno em X dias" com CTA "Ver acompanhamento". Aparece quando há retorno agendado em ≤ 30 dias.
+- **`DiagnosisScreen`** (laudo) — bloco "Plano de acompanhamento" após condutas, com mini-timeline e CTA.
+
+**Mock estratégico** (`src/data/followUpMock.js`): cenário "rotina" — paciente diagnosticado há 120 dias, fez D+30 (aderência 92%, AHI 8) e D+90 (aderência 85%, AHI 12 — deterioração leve). Sistema antecipou o próximo retorno para D+150 (antes do programado D+180). Conta uma história clínica completa em poucas linhas de mock.
+
+**Consequências:**
+- (+) Fecha o loop clínico — produto deixa de terminar no laudo e mostra cuidado contínuo.
+- (+) Antecipação clínica vira vendedor em demo (sistema "ativo" vs "passivo").
+- (+) Sleep Score + dados do relógio ganham razão de ser pra além de gamificação — alimentam decisão clínica.
+- (+) Portal médico ganha uso recorrente (lista de retornos do dia) — diferente do laudo único.
+- (−) Mais 3 telas para manter + Figma sync.
+- (−) Card "Próximo retorno" empurra Home pra baixo — coexiste com alerta pré-diag (que só aparece pré-diagnóstico) e card pós-exame (que só aparece com exame ativo), então em momentos distintos do tempo do paciente.
+
+**Alternativas consideradas:**
+- **Só gatilho temporal** — rejeitado: perde a história "produto inteligente" que justifica investimento.
+- **Sem tela dedicada `/acompanhamento`** (só card na Home) — rejeitado: jornada não cabe num card; paciente precisa ver evolução, histórico.
+- **Antecipação manual** (paciente vê alerta e decide) — rejeitado: empurra decisão pro paciente, contraria a promessa "sistema acompanha pra você".
+
+---
+
 <!-- Adicione novos ADRs abaixo. Sempre incrementar o número. -->
