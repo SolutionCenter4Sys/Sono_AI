@@ -388,7 +388,7 @@ const EPICS = [
   {
     id: 'WEB-EP-12',
     title: 'Atendimento, Exame & Laudo',
-    subtitle: 'Consulta → pré-diagnóstico → recomendação → aprovação → exame → laudo',
+    subtitle: 'Consulta → avaliação → recomendação → aprovação → exame → laudo',
     color: 'sun-moon',
     screens: [
       ['/exame/consulta', '09.0a Consulta agendada/realizada'],
