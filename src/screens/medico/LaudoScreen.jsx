@@ -1,6 +1,34 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Check } from 'lucide-react';
+
+/**
+ * Laudos por paciente (pós-PSG). Diagnóstico/CID são legítimos aqui — há exame
+ * real e o médico assina. Fallback: João Silva.
+ */
+const LAUDOS = {
+  'joao-c': {
+    name: 'João Carvalho', date: '10 Jun', number: 'AFIP-PSG-2026-04418',
+    diagnosis: 'Apneia Obstrutiva do Sono — moderada', cid: 'CID-10 · G47.33', tone: 'risk-moderate',
+  },
+  'roberto-s': {
+    name: 'Roberto Santos', date: '11 Jun', number: 'AFIP-PSG-2026-04420',
+    diagnosis: 'Apneia Obstrutiva do Sono — grave', cid: 'CID-10 · G47.33', tone: 'risk-high',
+  },
+  'maria-f': {
+    name: 'Maria Ferreira', date: '10 Jun', number: 'AFIP-PSG-2026-04419',
+    diagnosis: 'Apneia Obstrutiva do Sono — leve', cid: 'CID-10 · G47.33', tone: 'risk-low',
+  },
+  'helena-r': {
+    name: 'Helena Ramos', date: '09 Jun', number: 'AFIP-PSG-2026-04415',
+    diagnosis: 'Insônia crônica', cid: 'CID-10 · F51.0', tone: 'risk-moderate',
+  },
+};
+
+const DEFAULT_LAUDO = {
+  name: 'João Silva', date: '12 Jun', number: 'AFIP-PSG-2026-04421',
+  diagnosis: 'Apneia Obstrutiva do Sono — moderada', cid: 'CID-10 · G47.33', tone: 'risk-moderate',
+};
 
 const SIGNALS = [
   { label: 'EEG', color: 'laranja' },
@@ -40,6 +68,8 @@ const SIGN_CHECKS = [
 
 export default function LaudoScreen() {
   const navigate = useNavigate();
+  const { patientId } = useParams();
+  const laudo = LAUDOS[patientId] ?? DEFAULT_LAUDO;
   const [checks, setChecks] = useState([true, true, true]);
   const toggle = (i) => setChecks((c) => c.map((v, idx) => (idx === i ? !v : v)));
 
@@ -48,8 +78,8 @@ export default function LaudoScreen() {
       {/* Header */}
       <header className="flex items-center justify-between px-8 py-5">
         <div>
-          <h1 className="text-[22px] font-bold text-text-primary">Laudo: João Silva</h1>
-          <p className="text-xs text-baunilha/70">PSG · 12 Jun · AFIP-PSG-2026-04421</p>
+          <h1 className="text-[22px] font-bold text-text-primary">Laudo: {laudo.name}</h1>
+          <p className="text-xs text-baunilha/70">PSG · {laudo.date} · {laudo.number}</p>
         </div>
         <div className="flex items-center gap-3">
           <span className="rounded-pill bg-menta/20 px-4 py-2 text-xs font-semibold text-menta">
@@ -152,16 +182,16 @@ export default function LaudoScreen() {
               Diagnóstico final
             </span>
             <h2 className="mt-3 text-xl font-bold leading-tight text-text-primary">
-              Apneia Obstrutiva do Sono — moderada
+              {laudo.diagnosis}
             </h2>
             <span
               className="mt-3 inline-flex rounded-pill px-3 py-1.5 text-xs font-bold"
               style={{
-                backgroundColor: 'hsl(var(--risk-moderate) / 0.85)',
+                backgroundColor: `hsl(var(--${laudo.tone}) / 0.85)`,
                 color: 'hsl(var(--marinho-deep))',
               }}
             >
-              CID-10 · G47.33
+              {laudo.cid}
             </span>
             <p className="mt-4 text-xs font-semibold uppercase tracking-kicker text-baunilha/50">
               Condutas:

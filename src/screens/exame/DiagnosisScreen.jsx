@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   ChevronLeft,
   Check,
@@ -17,8 +17,10 @@ import {
 } from 'lucide-react';
 import PrimaryButton from '@/components/primitives/PrimaryButton.jsx';
 import { comingSoon } from '@/lib/demoToast.js';
+import { useUseCase } from '@/lib/useCaseContext.jsx';
+import TelemedicineBadge from '@/components/TelemedicineBadge.jsx';
 import {
-  LAUDO,
+  LAUDO as LAUDO_DEFAULT,
   HYPNOGRAM,
   STAGE_META,
   SPO2_CURVE,
@@ -40,9 +42,51 @@ const SEVERITY_COLOR = {
   critical: 'risk-critical',
 };
 
+function mergeLaudo(persona) {
+  const p = persona?.laudo;
+  if (!p) return LAUDO_DEFAULT;
+  const initials = (p.signedBy?.name || '')
+    .split(/\s+/).filter(Boolean).map((s) => s[0]).slice(0, 2).join('').toUpperCase()
+    || LAUDO_DEFAULT.signedBy.initials;
+  const diagLabel = typeof p.diagnosis === 'string'
+    ? p.diagnosis
+    : p.diagnosis?.label || LAUDO_DEFAULT.diagnosis.label;
+  return {
+    number: p.number ?? LAUDO_DEFAULT.number,
+    signedAt: p.signedAt ?? LAUDO_DEFAULT.signedAt,
+    signedBy: {
+      name: p.signedBy?.name ?? LAUDO_DEFAULT.signedBy.name,
+      initials,
+      crm: p.signedBy?.crm ?? LAUDO_DEFAULT.signedBy.crm,
+      rqe: p.signedBy?.rqe ?? LAUDO_DEFAULT.signedBy.rqe,
+      title: p.signedBy?.title ?? LAUDO_DEFAULT.signedBy.title,
+    },
+    validatedBy: p.validatedBy ?? LAUDO_DEFAULT.validatedBy,
+    standard: p.standard ?? LAUDO_DEFAULT.standard,
+    diagnosis: {
+      label: diagLabel,
+      cid: p.cid ?? p.diagnosis?.cid ?? LAUDO_DEFAULT.diagnosis.cid,
+      severity: p.severity ?? p.diagnosis?.severity ?? LAUDO_DEFAULT.diagnosis.severity,
+    },
+    metrics: {
+      iah: p.metrics?.iah ?? p.iah ?? LAUDO_DEFAULT.metrics.iah,
+      spo2Min: p.metrics?.spo2Min ?? LAUDO_DEFAULT.metrics.spo2Min,
+      efficiency: p.metrics?.efficiency ?? LAUDO_DEFAULT.metrics.efficiency,
+      duration: p.metrics?.duration ?? LAUDO_DEFAULT.metrics.duration,
+    },
+  };
+}
+
 export default function DiagnosisScreen() {
   const navigate = useNavigate();
   const [pdfOpen, setPdfOpen] = useState(false);
+  const { persona } = useUseCase();
+  if (persona && !persona.laudo) {
+    const qs = `?uc=${persona.id}`;
+    return <Navigate to={`/inicio${qs}`} replace />;
+  }
+  const LAUDO = mergeLaudo(persona);
+  const patientName = persona?.fullName ?? 'João Silva';
   const sevColor = SEVERITY_COLOR[LAUDO.diagnosis.severity];
 
   return (
@@ -70,6 +114,12 @@ export default function DiagnosisScreen() {
             <ShieldCheck size={14} /> Laudo assinado
           </span>
         </div>
+
+        {persona?.telemedicine && (
+          <div className="mt-3">
+            <TelemedicineBadge telemedicine={persona.telemedicine} geography={persona.geography} variant="detailed" />
+          </div>
+        )}
 
         {/* Diagnosis hero */}
         <section className="mt-4 rounded-card bg-surface p-6 text-center">
@@ -362,7 +412,13 @@ export default function DiagnosisScreen() {
         </div>
       </footer>
 
-      {pdfOpen && <PdfPreviewModal onClose={() => setPdfOpen(false)} />}
+      {pdfOpen && (
+        <PdfPreviewModal
+          onClose={() => setPdfOpen(false)}
+          laudo={LAUDO}
+          patientName={patientName}
+        />
+      )}
     </div>
   );
 }
@@ -597,7 +653,7 @@ function FollowUpRow({ icon, iconBg, title, hint, onClick }) {
 
 /* --------------------------------------------------------- PDF modal */
 
-function PdfPreviewModal({ onClose }) {
+function PdfPreviewModal({ onClose, laudo, patientName }) {
   return (
     <div
       className="absolute inset-0 z-50 flex items-end bg-marinho-deep/70 backdrop-blur-sm sm:items-center sm:justify-center"
@@ -627,29 +683,29 @@ function PdfPreviewModal({ onClose }) {
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#15152A]/60">
                 Instituto do Sono — AFIP
               </p>
-              <p className="text-[10px] text-[#15152A]/60">{LAUDO.number}</p>
+              <p className="text-[10px] text-[#15152A]/60">{laudo.number}</p>
             </div>
             <h2 className="mt-3 text-[15px] font-bold leading-tight">
               Laudo de Polissonografia Domiciliar
             </h2>
             <p className="mt-1 text-[10.5px] text-[#15152A]/60">
-              Paciente: João Silva · {LAUDO.signedAt}
+              Paciente: {patientName} · {laudo.signedAt}
             </p>
 
             <p className="mt-4 text-[11.5px] font-bold uppercase tracking-[0.15em] text-[#15152A]/70">
               Diagnóstico
             </p>
-            <p className="mt-1 text-[12.5px] font-semibold">{LAUDO.diagnosis.label}</p>
-            <p className="text-[10.5px] text-[#15152A]/70">{LAUDO.diagnosis.cid}</p>
+            <p className="mt-1 text-[12.5px] font-semibold">{laudo.diagnosis.label}</p>
+            <p className="text-[10.5px] text-[#15152A]/70">{laudo.diagnosis.cid}</p>
 
             <p className="mt-4 text-[11.5px] font-bold uppercase tracking-[0.15em] text-[#15152A]/70">
               Métricas principais
             </p>
             <div className="mt-1 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px]">
-              <span>IAH</span><span className="text-right font-semibold">{LAUDO.metrics.iah} ev/h</span>
-              <span>SpO₂ mínima</span><span className="text-right font-semibold">{LAUDO.metrics.spo2Min}%</span>
-              <span>Eficiência</span><span className="text-right font-semibold">{LAUDO.metrics.efficiency}%</span>
-              <span>Duração</span><span className="text-right font-semibold">{LAUDO.metrics.duration}</span>
+              <span>IAH</span><span className="text-right font-semibold">{laudo.metrics.iah} ev/h</span>
+              <span>SpO₂ mínima</span><span className="text-right font-semibold">{laudo.metrics.spo2Min}%</span>
+              <span>Eficiência</span><span className="text-right font-semibold">{laudo.metrics.efficiency}%</span>
+              <span>Duração</span><span className="text-right font-semibold">{laudo.metrics.duration}</span>
             </div>
 
             <p className="mt-4 text-[11.5px] font-bold uppercase tracking-[0.15em] text-[#15152A]/70">
@@ -660,12 +716,12 @@ function PdfPreviewModal({ onClose }) {
             </ul>
 
             <div className="mt-5 border-t border-[#15152A]/15 pt-3 text-[10.5px]">
-              <p className="font-semibold">{LAUDO.signedBy.name}</p>
+              <p className="font-semibold">{laudo.signedBy.name}</p>
               <p className="text-[#15152A]/70">
-                {LAUDO.signedBy.crm} · {LAUDO.signedBy.rqe}
+                {laudo.signedBy.crm} · {laudo.signedBy.rqe}
               </p>
               <p className="mt-1 text-[#15152A]/70">
-                Validado pelo {LAUDO.validatedBy} · {LAUDO.standard}
+                Validado pelo {laudo.validatedBy} · {laudo.standard}
               </p>
             </div>
           </div>
