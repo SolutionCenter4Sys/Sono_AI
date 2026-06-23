@@ -66,7 +66,7 @@ export default function HomeScreen() {
           seu sono
         </h1>
         <p className="mt-3 text-[15px] leading-[1.45] text-baunilha/70">
-          Conecte seu Galaxy Watch e descubra seu risco de apneia e insônia em
+          Conecte seu Galaxy Watch e veja como anda seu sono em
           menos de 5 minutos.
         </p>
       </div>

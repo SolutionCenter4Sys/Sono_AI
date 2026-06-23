@@ -11,8 +11,8 @@ import TextLink from '@/components/primitives/TextLink.jsx';
  */
 const TRIAGEM = [
   { value: '9', label: 'ESS', read: 'Sonolência leve', color: 'menta' },
-  { value: '5', label: 'STOP-BANG', read: 'Risco intermediário-alto de apneia', color: 'laranja' },
-  { value: '11', label: 'ISI', read: 'Insônia moderada', color: 'risk-moderate' },
+  { value: '5', label: 'STOP-BANG', read: 'Vários indícios de apneia', color: 'laranja' },
+  { value: '11', label: 'ISI', read: 'Sinais moderados de insônia', color: 'risk-moderate' },
   { value: '9', label: 'PSQI', read: 'Sono percebido como razoável', color: 'sun-moon' },
 ];
 
@@ -43,7 +43,7 @@ export default function PreDiagnosisScreen() {
           <ChevronLeft size={20} strokeWidth={2.4} />
         </button>
         <span className="text-[12px] font-semibold uppercase tracking-kicker text-baunilha/70">
-          Pré-diagnóstico
+          Resumo dos achados
         </span>
         <span className="h-10 w-10" aria-hidden />
       </header>

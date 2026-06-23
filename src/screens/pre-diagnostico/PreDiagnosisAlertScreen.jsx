@@ -83,7 +83,7 @@ export default function PreDiagnosisAlertScreen() {
           <ChevronLeft size={20} strokeWidth={2.4} />
         </button>
         <span className="text-[12px] font-semibold uppercase tracking-kicker text-baunilha/70">
-          Pré-diagnóstico
+          Triagem assistida
         </span>
         <span className="h-10 w-10" aria-hidden />
       </header>
@@ -126,12 +126,12 @@ export default function PreDiagnosisAlertScreen() {
             </span>
           </div>
           <h1 className="mt-3 text-[22px] font-bold leading-[1.2]">
-            Padrão compatível com apneia obstrutiva leve a moderada
+            Seu sono merece atenção
           </h1>
           <p className="mt-2.5 text-[13px] leading-[1.55] text-text-primary/80">
-            Nas últimas 7 noites o algoritmo identificou quedas repetidas de oxigenação,
-            FC noturna acima do seu baseline e sono curto e fragmentado — um conjunto
-            comum em apneia leve a moderada.
+            Nas últimas 7 noites a triagem identificou quedas repetidas de oxigenação,
+            FC noturna acima do seu baseline e sono curto e fragmentado. Um médico do sono
+            pode avaliar esses indícios com você.
           </p>
         </section>
 
@@ -150,12 +150,12 @@ export default function PreDiagnosisAlertScreen() {
         {/* Por que isso importa */}
         <section className="mt-4 rounded-card bg-surface p-5">
           <p className="text-[11px] font-semibold uppercase tracking-kicker text-baunilha/55">
-            Por que isso importa
+            Por que vale acompanhar
           </p>
           <p className="mt-2 text-[13px] leading-[1.55] text-text-primary/85">
-            Apneia obstrutiva não tratada está ligada a hipertensão, eventos
-            cardiovasculares, sonolência diurna e queda de qualidade de vida. Quanto
-            antes você confirma e trata, melhor o prognóstico.
+            Alterações do sono podem se relacionar com cansaço diurno, pressão e qualidade
+            de vida. Acompanhar cedo e conversar com um especialista ajuda a entender o que
+            está acontecendo.
           </p>
         </section>
 

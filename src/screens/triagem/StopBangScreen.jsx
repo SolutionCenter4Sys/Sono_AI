@@ -32,7 +32,7 @@ export default function StopBangScreen() {
           STOP-BANG · Apneia
         </p>
         <h1 className="mt-1.5 text-[24px] font-bold leading-tight">
-          Avaliação de risco de apneia
+          Triagem de indícios de apneia
         </h1>
         <p className="mt-2 text-[13px] text-baunilha/65">
           Responda SIM ou NÃO. Cada SIM aumenta a pontuação.
@@ -69,7 +69,7 @@ export default function StopBangScreen() {
             Parcial
           </p>
           <p className="mt-1 text-[28px] font-bold text-laranja">5 / 8 pontos</p>
-          <p className="text-[12px] text-baunilha/60">Risco intermediário-alto</p>
+          <p className="text-[12px] text-baunilha/60">Vários indícios de apneia</p>
         </section>
       </div>
 

@@ -7,6 +7,7 @@ import RiskBadge from '@/components/primitives/RiskBadge.jsx';
 import ScoreBar from '@/components/primitives/ScoreBar.jsx';
 import { useSleepState } from '@/state/SleepStateContext.jsx';
 import { comingSoon } from '@/lib/demoToast.js';
+import { DISCLAIMER } from '@/lib/positioning.js';
 
 const RISK_HEX = {
   low: { var: 'risk-low' },
@@ -114,17 +115,17 @@ export default function ResultScreen() {
         {/* Breakdown */}
         <section className="rounded-card bg-surface p-5">
           <h2 className="text-[11px] font-semibold uppercase tracking-kicker text-baunilha/50 mb-4">
-            Riscos detectados
+            Sinais observados
           </h2>
           <div className="space-y-4">
             <ScoreBar
-              label="Apneia obstrutiva"
+              label="Indícios de apneia"
               value={score.apnea}
               color="laranja"
               delay={0}
             />
             <ScoreBar
-              label="Insônia"
+              label="Indícios de insônia"
               value={score.insomnia}
               color="menta"
               delay={80}
@@ -145,7 +146,7 @@ export default function ResultScreen() {
               className="text-[11px] font-semibold uppercase tracking-kicker"
               style={{ color: `hsl(var(--${recColor}))` }}
             >
-              Recomendação
+              Orientação
             </p>
             <h3 className="mt-2 text-[20px] font-bold leading-[1.25]">
               {score.recommendation.title}
@@ -159,7 +160,7 @@ export default function ResultScreen() {
         {/* Findings */}
         <section className="rounded-card bg-surface p-5">
           <h2 className="text-[11px] font-semibold uppercase tracking-kicker text-baunilha/50 mb-3.5">
-            Principais achados
+            Destaques da noite
           </h2>
           {score.findings.length > 0 ? (
             <motion.ul
@@ -215,6 +216,9 @@ export default function ResultScreen() {
               ? 'Atualizado há instantes'
               : 'Atualizar dados do relógio'}
         </button>
+        <p className="px-4 text-center text-[11px] leading-[1.4] text-baunilha/45">
+          {DISCLAIMER.footer}
+        </p>
       </div>
     </div>
   );

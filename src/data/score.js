@@ -92,28 +92,31 @@ export function buildFindings(session, questionnaire) {
   return findings.slice(0, 5);
 }
 
-/** Recomendação textual conforme nível de risco. */
+/**
+ * Orientação textual conforme perfil de atenção.
+ * Posicionamento: triagem assistida, sem afirmar diagnóstico/condição.
+ */
 export function buildRecommendation(risk) {
   switch (risk) {
     case 'low':
       return {
-        title: 'Continue monitorando seu sono',
-        body: 'Não detectamos sinais preocupantes hoje. Manter o uso noturno do watch ajuda a identificar mudanças cedo.',
+        title: 'Continue acompanhando seu sono',
+        body: 'Os indícios desta noite estão dentro de uma faixa tranquila. Manter o uso noturno do relógio ajuda a perceber mudanças cedo.',
       };
     case 'moderate':
       return {
-        title: 'Procure um especialista do sono',
-        body: 'Os sinais detectados sugerem possível apneia obstrutiva. Recomendamos avaliação no Instituto do Sono (AFIP) com polissonografia para diagnóstico confirmatório.',
+        title: 'Considere conversar com um especialista',
+        body: 'Esta triagem identificou sinais que merecem atenção. Um médico do sono pode avaliar seus dados e orientar os próximos passos. Esta é uma triagem, não um diagnóstico.',
       };
     case 'high':
       return {
-        title: 'Avaliação no Instituto do Sono é recomendada',
-        body: 'Encontramos dessaturações relevantes que merecem investigação imediata. O Instituto do Sono (AFIP) está preparado para conduzir o diagnóstico.',
+        title: 'Procure um especialista do sono',
+        body: 'Esta triagem encontrou indícios que valem investigação. O Instituto do Sono (AFIP) pode conduzir a avaliação. Este resultado é indicativo, não um diagnóstico.',
       };
     case 'critical':
       return {
-        title: 'Procure atendimento médico com urgência',
-        body: 'Os números sugerem risco elevado. Procure o Instituto do Sono (AFIP) ou um serviço médico imediatamente para investigação detalhada.',
+        title: 'Vale buscar avaliação especializada em breve',
+        body: 'Esta triagem identificou sinais persistentes. Procure o Instituto do Sono (AFIP) ou um serviço médico para uma avaliação detalhada. Este resultado é indicativo, não um diagnóstico.',
       };
     default:
       return null;

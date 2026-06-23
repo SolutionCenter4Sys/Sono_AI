@@ -1,30 +1,21 @@
 import { cn } from '@/lib/utils.js';
+import { profileFor } from '@/lib/positioning.js';
 
 /**
- * Badge semântico de risco — pill com dot + label em caps tracked.
+ * Badge de perfil de atenção — pill com dot + label em caps tracked.
  * Atende WEB-EP-02-FT-02-US-01.
+ *
+ * Posicionamento: NÃO usa "risco". Comunica um perfil amigável de atenção
+ * (PERFIL TRANQUILO · MERECE ATENÇÃO · ALGO INCOMODA). Ver lib/positioning.js.
  *
  * Props:
  * - level: 'low' | 'moderate' | 'high' | 'critical'
- * - children: label custom (default = derivado do level)
+ * - children: label custom (default = perfil derivado do level)
  */
-const LEVEL_TOKEN = {
-  low: 'risk-low',
-  moderate: 'risk-moderate',
-  high: 'risk-high',
-  critical: 'risk-critical',
-};
-
-const LEVEL_LABEL = {
-  low: 'RISCO BAIXO',
-  moderate: 'RISCO MODERADO',
-  high: 'RISCO ALTO',
-  critical: 'RISCO CRÍTICO',
-};
-
 export default function RiskBadge({ level = 'moderate', children, className }) {
-  const token = LEVEL_TOKEN[level];
-  const label = children ?? LEVEL_LABEL[level];
+  const profile = profileFor(level);
+  const token = profile.token;
+  const label = children ?? profile.label;
 
   return (
     <span

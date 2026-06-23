@@ -9,7 +9,7 @@ import TextLink from '@/components/primitives/TextLink.jsx';
  */
 const INSTRUMENTS = [
   { n: '1', color: 'menta', title: 'Epworth (ESS)', hint: '8 perguntas · sonolência diurna' },
-  { n: '2', color: 'laranja', title: 'STOP-BANG', hint: '8 perguntas SIM/NÃO · risco apneia' },
+  { n: '2', color: 'laranja', title: 'STOP-BANG', hint: '8 perguntas SIM/NÃO · indícios de apneia' },
   { n: '3', color: 'risk-moderate', title: 'ISI', hint: '7 perguntas · severidade insônia' },
   { n: '4', color: 'baunilha', title: 'Pittsburgh (PSQI)', hint: 'qualidade subjetiva geral' },
 ];
@@ -60,7 +60,7 @@ export default function TriagemIntroScreen() {
           </p>
           <h1 className="mt-2 text-[26px] font-bold leading-tight">4 questionários · 5 minutos</h1>
           <p className="mx-auto mt-3 max-w-[320px] text-[14px] leading-[1.5] text-baunilha/65">
-            Avalia sonolência, risco de apneia, insônia e qualidade subjetiva do sono.
+            Avalia sonolência, indícios de apneia, insônia e qualidade subjetiva do sono.
             Instrumentos validados clinicamente.
           </p>
         </div>

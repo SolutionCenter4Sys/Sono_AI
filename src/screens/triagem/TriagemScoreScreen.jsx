@@ -19,22 +19,22 @@ const INTERPRETATIONS = [
   {
     color: 'menta',
     title: 'ESS 9 · Sonolência leve',
-    body: 'Apenas observação clínica',
+    body: 'Vale apenas acompanhar',
   },
   {
     color: 'laranja',
-    title: 'STOP-BANG 5 · Risco intermediário-alto de AOS',
-    body: 'Indica polissonografia confirmatória',
+    title: 'STOP-BANG 5 · Vários indícios de apneia',
+    body: 'Sugere investigar com polissonografia',
   },
   {
     color: 'risk-moderate',
-    title: 'ISI 11 · Insônia moderada',
-    body: 'Considerar TCC-I como conduta',
+    title: 'ISI 11 · Sinais moderados de insônia',
+    body: 'Um especialista pode orientar a conduta',
   },
   {
     color: 'sun-moon',
     title: 'PSQI · Sono percebido como razoável',
-    body: 'Discordância com dados objetivos do watch',
+    body: 'Difere dos dados objetivos do relógio',
   },
 ];
 
@@ -64,9 +64,10 @@ export default function TriagemScoreScreen() {
           <div className="flex justify-center">
             <RiskBadge level="moderate" />
           </div>
-          <h1 className="mt-3 text-[32px] font-bold leading-tight">Triagem positiva</h1>
+          <h1 className="mt-3 text-[32px] font-bold leading-tight">Vale investigar</h1>
           <p className="mt-2 text-[13px] leading-[1.4] text-baunilha/65">
-            Os sinais sugerem que vale a pena investigar — recomendamos uma polissonografia.
+            Os indícios sugerem que vale conversar com um especialista — uma polissonografia
+            pode esclarecer. Esta triagem não é um diagnóstico.
           </p>
           <div className="my-5 h-px w-full bg-surface-2" />
           <div className="flex items-end justify-between">
