@@ -27,8 +27,8 @@ export default function FaceInstructionsScreen() {
             pra concluir
           </h1>
           <p className="mx-auto mt-3 max-w-[320px] text-[15px] leading-[1.45] text-baunilha/70">
-            Vamos extrair marcadores anatômicos que ajudam a identificar riscos
-            respiratórios noturnos.
+            Vamos extrair marcadores anatômicos que ajudam a avaliar indícios
+            de distúrbios respiratórios do sono.
           </p>
         </div>
 
