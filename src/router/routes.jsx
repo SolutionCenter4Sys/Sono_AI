@@ -36,7 +36,6 @@ import InsightCardScreen from '@/screens/sono-ai/InsightCardScreen.jsx';
 // Sleep Score (gamificação)
 import SleepCoinsScreen from '@/screens/coins/SleepCoinsScreen.jsx';
 import ChallengeDetailScreen from '@/screens/coins/ChallengeDetailScreen.jsx';
-import RankingScreen from '@/screens/coins/RankingScreen.jsx';
 import NightsHistoryScreen from '@/screens/coins/NightsHistoryScreen.jsx';
 import WhatsappJourneyScreen from '@/screens/coins/WhatsappJourneyScreen.jsx';
 
@@ -99,6 +98,7 @@ import TriagemReviewScreen from '@/screens/medico/TriagemReviewScreen.jsx';
 import AgendaScreen from '@/screens/medico/AgendaScreen.jsx';
 import LaudoScreen from '@/screens/medico/LaudoScreen.jsx';
 import DashboardScreen from '@/screens/medico/DashboardScreen.jsx';
+import PacientesScreen from '@/screens/medico/PacientesScreen.jsx';
 
 export default function AppRoutes() {
   return (
@@ -159,7 +159,6 @@ export default function AppRoutes() {
         {/* Sleep Score (gamificação) */}
         <Route path="/score" element={<SleepCoinsScreen />} />
         <Route path="/score/challenge/:id" element={<ChallengeDetailScreen />} />
-        <Route path="/score/ranking" element={<RankingScreen />} />
         <Route path="/score/historico" element={<NightsHistoryScreen />} />
         <Route path="/score/regua-whatsapp" element={<WhatsappJourneyScreen />} />
 
@@ -211,6 +210,8 @@ export default function AppRoutes() {
         <Route path="/medico/triagem" element={<TriagemReviewScreen />} />
         <Route path="/medico/agenda" element={<AgendaScreen />} />
         <Route path="/medico/laudo" element={<LaudoScreen />} />
+        <Route path="/medico/laudo/:patientId" element={<LaudoScreen />} />
+        <Route path="/medico/pacientes" element={<PacientesScreen />} />
         <Route path="/medico/dashboard" element={<DashboardScreen />} />
         <Route path="/medico/retornos" element={<RetornosScreen />} />
       </Route>

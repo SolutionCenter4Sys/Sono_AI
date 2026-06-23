@@ -1,5 +1,260 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Plane, MapPin } from 'lucide-react';
+
+/**
+ * Casos de uso · personas com jornadas personalizadas (UC1-UC6).
+ * Cada caso aponta para a 1ª tela e mostra um stepper de até 5 passos.
+ */
+const USE_CASES = [
+  {
+    id: 'joao',
+    badge: 'Paciente com sintomas',
+    name: 'João',
+    age: 38,
+    persona: 'Executivo · ronco frequente · sonolência diurna',
+    quote: 'Acho que ronco e tenho sonolência diurna — vale investigar?',
+    color: 'laranja',
+    initials: 'JS',
+    start: '/onboarding/welcome',
+    steps: [
+      { path: '/onboarding/welcome', label: 'Onboarding' },
+      { path: '/pairing/select', label: 'Parear' },
+      { path: '/triagem/intro', label: 'Triagem' },
+      { path: '/pre-diagnostico', label: 'Indícios' },
+      { path: '/agenda/atendimento', label: 'Agendar' },
+    ],
+  },
+  {
+    id: 'maria',
+    badge: 'Paciente em jornada de exame',
+    name: 'Maria',
+    age: 52,
+    persona: 'HAS controlada · médico indicou PSG',
+    quote: 'Meu cardiologista pediu polissonografia. E agora?',
+    color: 'sun-moon',
+    initials: 'MS',
+    start: '/exame/recomendacao',
+    steps: [
+      { path: '/exame/recomendacao', label: 'Recomendação' },
+      { path: '/exame/aprovacao', label: 'Aprovação' },
+      { path: '/agenda/calendar/afip-vm', label: 'Agendar' },
+      { path: '/exame/em-revisao-medica', label: 'Em revisão' },
+      { path: '/exame/resultado', label: 'Laudo' },
+    ],
+  },
+  {
+    id: 'carlos',
+    badge: 'Paciente em terapia',
+    name: 'Carlos',
+    age: 45,
+    persona: 'AOS moderada · 120 dias em CPAP',
+    quote: 'Quero ver como meu tratamento está evoluindo.',
+    color: 'menta',
+    initials: 'CR',
+    start: '/inicio',
+    steps: [
+      { path: '/inicio', label: 'Home' },
+      { path: '/score', label: 'Sleep Score' },
+      { path: '/score/historico', label: 'Histórico' },
+      { path: '/acompanhamento', label: 'Acompanhamento' },
+      { path: '/acompanhamento/retorno/r-d90', label: 'Retorno D+90' },
+    ],
+  },
+  {
+    id: 'ana',
+    badge: 'Paciente saudável',
+    name: 'Ana',
+    age: 29,
+    persona: 'Sem queixas · usa wearable por curiosidade',
+    quote: 'Quero monitorar e melhorar minha qualidade de sono.',
+    color: 'sun-moon',
+    initials: 'AL',
+    start: '/inicio?profile=novo',
+    steps: [
+      { path: '/inicio?profile=novo', label: 'Home (novo)' },
+      { path: '/score?profile=novo', label: 'Score (vazio)' },
+      { path: '/score/challenge/sem-cafeina', label: 'Hábito' },
+      { path: '/sono-ai/full', label: 'Sono AI' },
+      { path: '/score/historico?profile=novo', label: 'Histórico' },
+    ],
+  },
+  {
+    id: 'roberto',
+    badge: 'Antecipação clínica',
+    name: 'Roberto',
+    age: 60,
+    persona: 'AOS grave · 150 dias pós-laudo · piora detectada',
+    quote: 'Por que fui chamado antes do retorno programado?',
+    color: 'laranja',
+    initials: 'RM',
+    start: '/inicio',
+    steps: [
+      { path: '/inicio', label: 'Home + alerta' },
+      { path: '/acompanhamento', label: 'Timeline' },
+      { path: '/acompanhamento/retorno/r-d150', label: 'D+150 antecipado' },
+      { path: '/medico/retornos', label: 'Visão médica' },
+      { path: '/exame/consulta', label: 'Próxima consulta' },
+    ],
+  },
+  {
+    id: 'marcela',
+    badge: 'Médica do sono',
+    name: 'Dra. Marcela',
+    age: 41,
+    persona: 'Especialista AFIP · CRM/RQE/CNES',
+    quote: 'Quero revisar laudos pendentes e ver minha agenda.',
+    color: 'menta',
+    initials: 'DM',
+    start: '/medico/cadastro',
+    desktop: true,
+    steps: [
+      { path: '/medico/cadastro', label: 'Cadastro CRM' },
+      { path: '/medico/triagem', label: 'Triagem' },
+      { path: '/medico/agenda', label: 'Agenda' },
+      { path: '/medico/laudo', label: 'Laudo HITL' },
+      { path: '/medico/dashboard', label: 'Dashboard' },
+    ],
+  },
+];
+
+/**
+ * Casos geográficos · telemedicina por barreira de distância.
+ * Interior BR + lusofonia internacional + fronteira LATAM (ADR-031 + Fase G).
+ */
+const GEO_USE_CASES = [
+  {
+    id: 'paraiba_sertao',
+    badge: 'BR · Sertão / SUS',
+    name: 'João Bezerra',
+    age: 54,
+    persona: 'Agricultor familiar · Sousa-PB',
+    quote: 'Especialista do sono mais perto fica a 440 km — fila SUS de mais de 1 ano.',
+    color: 'laranja',
+    initials: 'JB',
+    flag: '🇧🇷',
+    region: 'Sousa, PB',
+    distanceKm: 440,
+    partner: 'Correios SEDEX → AFIP-SP',
+    start: '/inicio',
+    steps: [
+      { path: '/inicio', label: 'Home + alerta' },
+      { path: '/pre-diagnostico', label: 'Indícios' },
+      { path: '/polisso-movel/sugestao', label: 'Pedir kit' },
+      { path: '/polisso-movel/tracking', label: 'Rastreio' },
+      { path: '/agenda/teleconsulta', label: 'Tele AFIP' },
+    ],
+  },
+  {
+    id: 'amazonia_ribeirinho',
+    badge: 'BR · Amazônia',
+    name: 'Raimundo Costa',
+    age: 47,
+    persona: 'Ribeirinho · Tefé-AM',
+    quote: 'Pra ir a Manaus levo 1 dia de barco. O kit veio pelo avião da FAB.',
+    color: 'sun-moon',
+    initials: 'RC',
+    flag: '🇧🇷',
+    region: 'Tefé, AM',
+    distanceKm: 530,
+    partner: 'AFIP × DSEI-MAJ · FAB Logística',
+    start: '/inicio',
+    steps: [
+      { path: '/inicio', label: 'Home' },
+      { path: '/polisso-movel/acompanhamento', label: 'Exame 4/7' },
+      { path: '/polisso-movel/dispositivo', label: 'Kit · sinal fraco' },
+      { path: '/polisso-movel/stream', label: 'Stream offline' },
+      { path: '/dispositivo', label: 'Galaxy Watch' },
+    ],
+  },
+  {
+    id: 'angola_luanda',
+    badge: 'AO · Lusofonia',
+    name: 'Pedro Mendes',
+    age: 38,
+    persona: 'Expatriado BR · Luanda',
+    quote: '5 médicos do sono em todo Angola. Faço o follow-up por vídeo com SP.',
+    color: 'menta',
+    initials: 'PM',
+    flag: '🇦🇴',
+    region: 'Luanda',
+    distanceKm: 6800,
+    partner: 'Sagrada Esperança × AFIP',
+    start: '/inicio',
+    steps: [
+      { path: '/inicio', label: 'Home' },
+      { path: '/exame/resultado', label: 'Laudo INT' },
+      { path: '/acompanhamento', label: 'D+30 · D+90' },
+      { path: '/score', label: 'Sleep Score' },
+      { path: '/dispositivo', label: 'Dispositivo' },
+    ],
+  },
+  {
+    id: 'portugal_porto',
+    badge: 'PT · Diáspora',
+    name: 'Sofia Almeida',
+    age: 45,
+    persona: 'Luso-brasileira · Porto',
+    quote: 'O SNS demora — minha família confia na AFIP. Kit chegou em 3 dias.',
+    color: 'sun-moon',
+    initials: 'SA',
+    flag: '🇵🇹',
+    region: 'Porto, V.N. Gaia',
+    distanceKm: 7900,
+    partner: 'CINTESIS / CHUP × AFIP',
+    start: '/inicio',
+    steps: [
+      { path: '/inicio', label: 'Home' },
+      { path: '/polisso-movel/acompanhamento', label: 'Em revisão HITL' },
+      { path: '/agenda/teleconsulta', label: 'Tele · pt-PT' },
+      { path: '/exame/em-revisao-medica', label: 'Revisão' },
+      { path: '/dispositivo', label: 'Dispositivo' },
+    ],
+  },
+  {
+    id: 'mocambique_maputo',
+    badge: 'MZ · CPLP-Sono',
+    name: 'Sr. Joaquim',
+    age: 56,
+    persona: 'Funcionário público · Maputo',
+    quote: '1 médico do sono em todo Moçambique. Antecipei consulta porque a aderência caiu.',
+    color: 'laranja',
+    initials: 'JM',
+    flag: '🇲🇿',
+    region: 'Maputo',
+    distanceKm: 7400,
+    partner: 'HCM × AFIP × Gulbenkian',
+    start: '/inicio',
+    steps: [
+      { path: '/inicio', label: 'Home + alerta' },
+      { path: '/acompanhamento', label: 'Antecipado' },
+      { path: '/acompanhamento/retorno/r-d150', label: 'D+120 antec.' },
+      { path: '/exame/resultado', label: 'Laudo grave' },
+      { path: '/medico/laudo', label: 'Revisão AFIP' },
+    ],
+  },
+  {
+    id: 'bolivia_fronteira',
+    badge: 'BO · Fronteira BR',
+    name: 'Marcos Quispe',
+    age: 41,
+    persona: 'Comerciante · Cobija · Pando',
+    quote: 'Cruzo a ponte BR-MAP-024 e retiro o kit em Rio Branco no mesmo dia.',
+    color: 'menta',
+    initials: 'MQ',
+    flag: '🇧🇴',
+    region: 'Cobija (BO) · Rio Branco (BR)',
+    distanceKm: 1100,
+    partner: 'UFAC × AFIP',
+    start: '/inicio',
+    steps: [
+      { path: '/inicio', label: 'Home + alerta' },
+      { path: '/pre-diagnostico', label: 'Indícios' },
+      { path: '/polisso-movel/retirada', label: 'Retirar Rio Branco' },
+      { path: '/agenda/teleconsulta', label: 'Tele bi-língue' },
+      { path: '/dispositivo', label: 'Dispositivo' },
+    ],
+  },
+];
 
 /**
  * Tela inicial (apenas em demo) — índice de todas as 59 telas do protótipo.
@@ -86,15 +341,16 @@ const EPICS = [
   {
     id: 'WEB-EP-09',
     title: 'Sleep Score · Acompanhamento',
-    subtitle: 'Gamificação · insights · desafios · ranking · histórico',
+    subtitle: 'Higiene do sono · insights · hábitos · histórico (ativado pelo médico)',
     color: 'sun-moon',
     screens: [
       ['/score', '08.1 Sleep Score (pontos)'],
-      ['/score/challenge/sem-cafeina', '08.2 Challenge detail'],
-      ['/score/ranking', '08.3 Ranking (leaderboard)'],
+      ['/score?profile=novo', '08.1b Sleep Score (paciente novo · vazio)'],
+      ['/score/challenge/sem-cafeina', '08.2 Hábito (detalhe)'],
       ['/score/historico', '08.4 Histórico de noites'],
+      ['/score/historico?profile=novo', '08.4b Histórico (paciente novo · vazio)'],
       ['/score/regua-whatsapp', '08.5 Régua WhatsApp'],
-      ['/pre-diagnostico', '08.6 Pré-diagnóstico algorítmico'],
+      ['/pre-diagnostico', '08.6 Triagem assistida (indícios)'],
       ['/acompanhamento', '08.7 Acompanhamento (hub)'],
       ['/acompanhamento/retorno/r-d150', '08.8 Próximo retorno (antecipado)'],
       ['/acompanhamento/retorno/r-d90', '08.9 Retorno concluído (D+90)'],
@@ -136,7 +392,7 @@ const EPICS = [
     color: 'sun-moon',
     screens: [
       ['/exame/consulta', '09.0a Consulta agendada/realizada'],
-      ['/exame/pre-diagnostico', '09.0b Pré-diagnóstico (achados)'],
+      ['/exame/pre-diagnostico', '09.0b Resumo dos achados'],
       ['/exame/recomendacao', '09.0c Recomendação (médico + IA)'],
       ['/exame/aprovacao', '09.0d Aprovação (assinatura + convênio)'],
       ['/exame/confirmar', '09.0e Confirmar exame (modalidade)'],
@@ -161,9 +417,218 @@ const EPICS = [
       ['/medico/laudo', '10.4 Laudo HITL + FHIR'],
       ['/medico/dashboard', '10.5 Dashboard KPIs'],
       ['/medico/retornos', '10.6 Retornos do dia'],
+      ['/medico/pacientes', '10.7 Pacientes'],
     ],
   },
 ];
+
+/** Anexa `?uc=<id>` ao path preservando query params/hash já existentes. */
+function withUc(path, id) {
+  if (!path) return path;
+  const [pathPart, hash] = path.split('#');
+  const [pathname, search] = pathPart.split('?');
+  const params = new URLSearchParams(search || '');
+  params.set('uc', id);
+  return `${pathname}?${params.toString()}${hash ? `#${hash}` : ''}`;
+}
+
+function UseCaseCard({ useCase }) {
+  const { id, badge, name, age, persona, quote, color, initials, start, steps, desktop } = useCase;
+  const startWithUc = withUc(start, id);
+
+  return (
+    <Link
+      to={startWithUc}
+      className="group rounded-card bg-surface border border-surface-2/40 p-5 flex flex-col gap-3 hover:bg-surface/80 transition relative"
+      style={{ borderColor: `hsl(var(--${color}) / 0.30)` }}
+    >
+      {/* Header: badge + desktop chip + avatar */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-col gap-1">
+          <span
+            className="text-[10px] font-semibold uppercase tracking-kicker px-2 py-0.5 rounded-full self-start"
+            style={{
+              backgroundColor: `hsl(var(--${color}) / 0.16)`,
+              color: `hsl(var(--${color}))`,
+            }}
+          >
+            {badge}
+          </span>
+          {desktop ? (
+            <span className="text-[9px] font-semibold uppercase tracking-kicker text-baunilha/45">
+              Desktop 1440×900
+            </span>
+          ) : null}
+        </div>
+        <div
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-sm font-bold"
+          style={{
+            backgroundColor: `hsl(var(--${color}) / 0.18)`,
+            color: `hsl(var(--${color}))`,
+          }}
+        >
+          {initials}
+        </div>
+      </div>
+
+      {/* Identidade */}
+      <div>
+        <h3 className="text-lg font-bold leading-tight">
+          {name}, {age}a
+        </h3>
+        <p className="text-xs text-baunilha/60 mt-0.5">{persona}</p>
+      </div>
+
+      {/* Quote */}
+      <blockquote className="text-sm italic text-baunilha/80 border-l-2 pl-3 py-0.5"
+        style={{ borderColor: `hsl(var(--${color}) / 0.5)` }}>
+        “{quote}”
+      </blockquote>
+
+      {/* Stepper visual mini */}
+      <div className="mt-1 pt-2">
+        <div className="text-[10px] uppercase tracking-kicker text-baunilha/40 mb-2">
+          Jornada · {steps.length} passos
+        </div>
+        <div className="relative">
+          {/* Linha de conexão */}
+          <div
+            className="absolute top-1.5 left-1.5 right-1.5 h-px"
+            style={{ backgroundColor: `hsl(var(--${color}) / 0.3)` }}
+          />
+          {/* Dots + labels */}
+          <ol className="relative grid grid-cols-5 gap-1">
+            {steps.map((step, idx) => (
+              <li key={step.path} className="flex flex-col items-center text-center">
+                <span
+                  className="block h-3 w-3 rounded-full ring-2 ring-surface"
+                  style={{ backgroundColor: `hsl(var(--${color}))` }}
+                />
+                <span className="mt-1.5 text-[9.5px] leading-tight text-baunilha/65 line-clamp-2">
+                  {idx + 1}. {step.label}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div
+        className="mt-2 flex items-center justify-between rounded-md px-3 py-2 text-sm font-semibold transition group-hover:px-4"
+        style={{
+          backgroundColor: `hsl(var(--${color}) / 0.14)`,
+          color: `hsl(var(--${color}))`,
+        }}
+      >
+        <span>Iniciar jornada</span>
+        <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+      </div>
+    </Link>
+  );
+}
+
+function GeoUseCaseCard({ useCase }) {
+  const { id, badge, name, age, persona, quote, color, initials, flag, region, distanceKm, partner, start, steps } = useCase;
+  const startWithUc = withUc(start, id);
+
+  return (
+    <Link
+      to={startWithUc}
+      className="group rounded-card bg-surface border border-surface-2/40 p-5 flex flex-col gap-3 hover:bg-surface/80 transition relative"
+      style={{ borderColor: `hsl(var(--${color}) / 0.30)` }}
+    >
+      {/* Bandeira gigante + meta geográfico */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-col gap-1">
+          <span
+            className="text-[10px] font-semibold uppercase tracking-kicker px-2 py-0.5 rounded-full self-start"
+            style={{
+              backgroundColor: `hsl(var(--${color}) / 0.16)`,
+              color: `hsl(var(--${color}))`,
+            }}
+          >
+            {badge}
+          </span>
+          <span className="flex items-center gap-1 text-[10px] text-baunilha/55 mt-0.5">
+            <MapPin size={10} /> {region} · {distanceKm.toLocaleString('pt-BR')} km do especialista
+          </span>
+        </div>
+        <div className="flex flex-col items-end gap-0.5">
+          <span className="text-2xl leading-none" aria-hidden>{flag}</span>
+          <span
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-[11px] font-bold"
+            style={{
+              backgroundColor: `hsl(var(--${color}) / 0.18)`,
+              color: `hsl(var(--${color}))`,
+            }}
+          >
+            {initials}
+          </span>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-bold leading-tight">{name}, {age}a</h3>
+        <p className="text-xs text-baunilha/60 mt-0.5">{persona}</p>
+      </div>
+
+      <blockquote
+        className="text-sm italic text-baunilha/80 border-l-2 pl-3 py-0.5"
+        style={{ borderColor: `hsl(var(--${color}) / 0.5)` }}
+      >
+        “{quote}”
+      </blockquote>
+
+      <div
+        className="rounded-md border border-dashed px-2.5 py-1.5 text-[10.5px] text-baunilha/70"
+        style={{ borderColor: `hsl(var(--${color}) / 0.35)` }}
+      >
+        <span className="block text-[9px] uppercase tracking-kicker text-baunilha/45 mb-0.5">
+          Parceiro de telemedicina
+        </span>
+        {partner}
+      </div>
+
+      {/* Stepper */}
+      <div className="mt-1 pt-2">
+        <div className="text-[10px] uppercase tracking-kicker text-baunilha/40 mb-2">
+          Jornada · {steps.length} passos
+        </div>
+        <div className="relative">
+          <div
+            className="absolute top-1.5 left-1.5 right-1.5 h-px"
+            style={{ backgroundColor: `hsl(var(--${color}) / 0.3)` }}
+          />
+          <ol className="relative grid grid-cols-5 gap-1">
+            {steps.map((step, idx) => (
+              <li key={step.path} className="flex flex-col items-center text-center">
+                <span
+                  className="block h-3 w-3 rounded-full ring-2 ring-surface"
+                  style={{ backgroundColor: `hsl(var(--${color}))` }}
+                />
+                <span className="mt-1.5 text-[9.5px] leading-tight text-baunilha/65 line-clamp-2">
+                  {idx + 1}. {step.label}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <div
+        className="mt-2 flex items-center justify-between rounded-md px-3 py-2 text-sm font-semibold transition group-hover:px-4"
+        style={{
+          backgroundColor: `hsl(var(--${color}) / 0.14)`,
+          color: `hsl(var(--${color}))`,
+        }}
+      >
+        <span>Iniciar jornada</span>
+        <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+      </div>
+    </Link>
+  );
+}
 
 export default function DashboardHome() {
   const total = EPICS.reduce((s, e) => s + e.screens.length, 0);
@@ -185,9 +650,9 @@ export default function DashboardHome() {
           Protótipo navegável
         </h1>
         <p className="text-baunilha/70 max-w-2xl">
-          Comece pela jornada do paciente para ver o fluxo encadeado, ou abra qualquer
-          tela específica nos épicos abaixo. O menu 🐛 (canto superior direito) também
-          navega entre telas.
+          Escolha um <strong className="text-baunilha">caso de uso</strong> para
+          percorrer a jornada de uma persona específica, comece pelo onboarding
+          padrão, ou abra qualquer tela avulsa nos épicos abaixo.
         </p>
       </header>
 
@@ -232,6 +697,43 @@ export default function DashboardHome() {
             </span>
           </span>
         </Link>
+      </section>
+
+      {/* Casos de uso · personas e jornadas */}
+      <section className="mb-12">
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="text-sm font-semibold uppercase tracking-kicker text-baunilha/50">
+            Casos de uso · {USE_CASES.length} personas com jornadas personalizadas
+          </h2>
+          <span className="text-[10px] uppercase tracking-kicker text-baunilha/35">
+            Clique no caso para iniciar a jornada
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {USE_CASES.map((uc) => (
+            <UseCaseCard key={uc.id} useCase={uc} />
+          ))}
+        </div>
+      </section>
+
+      {/* Telemedicina · alcance geográfico */}
+      <section className="mb-12">
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="text-sm font-semibold uppercase tracking-kicker text-baunilha/50 flex items-center gap-2">
+            <Plane size={14} className="text-laranja" />
+            Telemedicina · barreira de distância · {GEO_USE_CASES.length} cenários
+          </h2>
+          <span className="text-[10px] uppercase tracking-kicker text-baunilha/35">
+            Interior BR · Lusofonia · Fronteira LATAM
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {GEO_USE_CASES.map((uc) => (
+            <GeoUseCaseCard key={uc.id} useCase={uc} />
+          ))}
+        </div>
       </section>
 
       <h2 className="text-sm font-semibold uppercase tracking-kicker text-baunilha/50 mb-4 max-w-3xl">
