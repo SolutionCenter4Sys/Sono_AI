@@ -1,5 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, ChevronRight } from 'lucide-react';
+import { AlertTriangle, ChevronRight, Moon } from 'lucide-react';
+import { getPersona } from '@/data/personasMock.js';
+import { useSleepScoreAdmin } from '@/lib/sleepScoreService.jsx';
+
+/** Pacientes-demo para ativar o Sleep Score como tratamento. */
+const SLEEP_SCORE_PATIENTS = ['joao', 'carlos', 'ana'];
 
 const KPIS = [
   { label: 'Pacientes ativos', value: '248', tone: 'menta', bar: 35 },
@@ -17,10 +22,10 @@ const FUNNEL = [
 ];
 
 const REVIEW = [
-  { initials: 'RS', name: 'Roberto S.', sub: '11 Jun · PSG' },
-  { initials: 'MF', name: 'Maria F.', sub: '10 Jun · PSG' },
-  { initials: 'JC', name: 'João C.', sub: '10 Jun · PSG' },
-  { initials: 'HR', name: 'Helena R.', sub: '09 Jun · PSG' },
+  { id: 'roberto-s', initials: 'RS', name: 'Roberto S.', sub: '11 Jun · PSG' },
+  { id: 'maria-f', initials: 'MF', name: 'Maria F.', sub: '10 Jun · PSG' },
+  { id: 'joao-c', initials: 'JC', name: 'João C.', sub: '10 Jun · PSG' },
+  { id: 'helena-r', initials: 'HR', name: 'Helena R.', sub: '09 Jun · PSG' },
 ];
 
 const ALERTS = [
@@ -30,14 +35,9 @@ const ALERTS = [
   { name: 'Luiza Mendes', note: 'Bateria CPAP baixa' },
 ];
 
-const REVENUE = [
-  ['Consultas', 'R$ 22.400'],
-  ['Laudos PSG', 'R$ 18.200'],
-  ['Acompanhamento', 'R$ 8.120'],
-];
-
 export default function DashboardScreen() {
   const navigate = useNavigate();
+  const sleepScore = useSleepScoreAdmin();
 
   return (
     <div className="min-h-dvh">
@@ -117,7 +117,7 @@ export default function DashboardScreen() {
                 <button
                   key={r.initials}
                   type="button"
-                  onClick={() => navigate('/medico/laudo/walter')}
+                  onClick={() => navigate(`/medico/laudo/${r.id}`)}
                   className="flex w-full items-center gap-3 rounded-card bg-surface-2 p-3 text-left"
                 >
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-surface text-xs font-bold text-baunilha">
@@ -136,46 +136,91 @@ export default function DashboardScreen() {
           </section>
         </div>
 
-        {/* Alerts + Revenue */}
-        <div className="grid grid-cols-[1fr_400px] gap-4">
-          <section className="rounded-card-lg bg-surface p-6">
-            <span className="text-xs font-semibold uppercase tracking-kicker text-risk-moderate">
-              Pacientes com alertas
-            </span>
-            <div className="mt-3 space-y-2.5">
-              {ALERTS.map((a) => (
-                <div
-                  key={a.name}
-                  className="flex items-center gap-3 rounded-card bg-surface-2 px-4 py-3"
-                >
-                  <AlertTriangle size={16} className="shrink-0 text-risk-moderate" />
-                  <span className="flex-1 text-sm font-semibold text-text-primary">{a.name}</span>
-                  <span className="text-xs text-risk-moderate">{a.note}</span>
-                  <ChevronRight size={15} className="text-baunilha/50" />
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="rounded-card-lg bg-surface p-6">
+        {/* Sleep Score como tratamento — médico ativa por paciente */}
+        <section className="rounded-card-lg bg-surface p-6">
+          <div className="flex items-center gap-2">
+            <Moon size={16} className="text-menta" />
             <span className="text-xs font-semibold uppercase tracking-kicker text-menta">
-              Receita do mês
+              Sleep Score · acompanhamento contínuo
             </span>
-            <p className="mt-2 text-3xl font-bold text-text-primary">R$ 48.720</p>
-            <div className="mt-3 h-2 w-full rounded-pill bg-surface-2">
-              <div className="h-full w-3/4 rounded-pill bg-menta" />
-            </div>
-            <div className="mt-4 space-y-2.5 border-t border-surface-2/60 pt-3">
-              {REVENUE.map(([k, v]) => (
-                <div key={k} className="flex items-center justify-between">
-                  <span className="text-sm text-baunilha/80">{k}</span>
-                  <span className="text-sm font-semibold text-text-primary">{v}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
+          </div>
+          <p className="mt-1 text-[13px] text-baunilha/65">
+            Ative o acompanhamento da higiene do sono como parte do tratamento. O paciente
+            passa a ver o score diário e hábitos sugeridos no app.
+          </p>
+          <div className="mt-4 grid grid-cols-3 gap-3">
+            {SLEEP_SCORE_PATIENTS.map((id) => {
+              const persona = getPersona(id);
+              const active = sleepScore.isActive(persona);
+              return (
+                <PatientSleepScoreCard
+                  key={id}
+                  persona={persona}
+                  active={active}
+                  onToggle={() =>
+                    active
+                      ? sleepScore.deactivate(id)
+                      : sleepScore.activate(id, 'Dra. Marcela')
+                  }
+                />
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Alerts */}
+        <section className="rounded-card-lg bg-surface p-6">
+          <span className="text-xs font-semibold uppercase tracking-kicker text-risk-moderate">
+            Pacientes com alertas
+          </span>
+          <div className="mt-3 space-y-2.5">
+            {ALERTS.map((a) => (
+              <div
+                key={a.name}
+                className="flex items-center gap-3 rounded-card bg-surface-2 px-4 py-3"
+              >
+                <AlertTriangle size={16} className="shrink-0 text-risk-moderate" />
+                <span className="flex-1 text-sm font-semibold text-text-primary">{a.name}</span>
+                <span className="text-xs text-risk-moderate">{a.note}</span>
+                <ChevronRight size={15} className="text-baunilha/50" />
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
+    </div>
+  );
+}
+
+function PatientSleepScoreCard({ persona, active, onToggle }) {
+  const name = persona?.firstName
+    ? `${persona.firstName}${persona.lastName ? ' ' + persona.lastName : ''}`
+    : (persona?.name ?? persona?.id);
+  return (
+    <div className="flex flex-col gap-3 rounded-card bg-surface-2/50 p-4">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-semibold text-text-primary">{name}</span>
+        <span
+          className="rounded-pill px-2 py-0.5 text-[10px] font-bold uppercase tracking-kicker"
+          style={{
+            backgroundColor: active ? 'hsl(var(--menta) / 0.18)' : 'hsl(var(--surface))',
+            color: active ? 'hsl(var(--menta))' : 'hsl(var(--baunilha) / 0.55)',
+          }}
+        >
+          {active ? 'Ativo' : 'Inativo'}
+        </span>
+      </div>
+      <button
+        type="button"
+        onClick={onToggle}
+        className="rounded-button px-3 py-2 text-[12.5px] font-semibold transition"
+        style={{
+          backgroundColor: active ? 'hsl(var(--surface))' : 'hsl(var(--menta))',
+          color: active ? 'hsl(var(--baunilha) / 0.8)' : 'hsl(var(--marinho-deep))',
+        }}
+      >
+        {active ? 'Desativar' : 'Ativar Sleep Score'}
+      </button>
     </div>
   );
 }

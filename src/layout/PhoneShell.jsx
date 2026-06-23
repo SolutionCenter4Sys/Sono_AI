@@ -87,7 +87,6 @@ const DEBUG_LINKS = [
   { group: 'Sono AI · Sleep Score', items: [
     ['/sono-ai/full', 'Chat full'],
     ['/score', 'Sleep Score'],
-    ['/score/ranking', 'Ranking'],
   ]},
   { group: 'Polisso · Triagem · Agenda · Exame', items: [
     ['/polisso-movel/sugestao', 'Polisso sugestão'],
