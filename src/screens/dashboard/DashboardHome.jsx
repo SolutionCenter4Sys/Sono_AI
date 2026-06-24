@@ -19,7 +19,8 @@ const USE_CASES = [
     steps: [
       { path: '/onboarding/welcome', label: 'Onboarding' },
       { path: '/pairing/select', label: 'Parear' },
-      { path: '/triagem/intro', label: 'Triagem' },
+      { path: '/app/questionnaire', label: 'Queixa (multi)' },
+      { path: '/triagem/intro', label: 'Triagem dir.' },
       { path: '/pre-diagnostico', label: 'Indícios' },
       { path: '/agenda/atendimento', label: 'Agendar' },
     ],
@@ -73,6 +74,7 @@ const USE_CASES = [
     steps: [
       { path: '/inicio?profile=novo', label: 'Home (novo)' },
       { path: '/score?profile=novo', label: 'Score (vazio)' },
+      { path: '/metodologia', label: 'Como funciona' },
       { path: '/score/challenge/sem-cafeina', label: 'Hábito' },
       { path: '/sono-ai/full', label: 'Sono AI' },
       { path: '/score/historico?profile=novo', label: 'Histórico' },
@@ -497,7 +499,7 @@ function UseCaseCard({ useCase }) {
             style={{ backgroundColor: `hsl(var(--${color}) / 0.3)` }}
           />
           {/* Dots + labels */}
-          <ol className="relative grid grid-cols-5 gap-1">
+          <ol className="relative grid gap-1" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
             {steps.map((step, idx) => (
               <li key={step.path} className="flex flex-col items-center text-center">
                 <span
@@ -600,7 +602,7 @@ function GeoUseCaseCard({ useCase }) {
             className="absolute top-1.5 left-1.5 right-1.5 h-px"
             style={{ backgroundColor: `hsl(var(--${color}) / 0.3)` }}
           />
-          <ol className="relative grid grid-cols-5 gap-1">
+          <ol className="relative grid gap-1" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
             {steps.map((step, idx) => (
               <li key={step.path} className="flex flex-col items-center text-center">
                 <span
