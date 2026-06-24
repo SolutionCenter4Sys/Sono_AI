@@ -43,8 +43,8 @@ export default function ScheduleOrientationScreen() {
         </p>
         <h1 className="mt-1.5 text-[26px] font-bold leading-tight">Escolha um horário</h1>
         <p className="mt-2 text-[14px] leading-[1.5] text-baunilha/65">
-          Videochamada de 15 minutos com técnico para te ensinar a usar o kit. Hoje à noite,
-          antes do seu sono normal.
+          Videochamada de 15 minutos + vídeo de orientação passo a passo, para você usar o kit
+          sem montar nada sozinho. Hoje à noite, antes do seu sono normal.
         </p>
 
         {/* Slots */}

@@ -8,8 +8,8 @@ import TextLink from '@/components/primitives/TextLink.jsx';
  * Figma 48:3.
  */
 const STEPS = [
-  'Você escolhe onde e como fazer o exame',
-  'Sensores clínicos monitoram uma noite de sono',
+  'Você assiste a um vídeo de orientação e recebe o kit',
+  'Sensores clínicos (FC, oximetria, fluxo e esforço) monitoram uma noite',
   'Resultado preliminar em 24h, laudo médico em 5 dias',
 ];
 
@@ -78,6 +78,21 @@ export default function ExamSuggestionScreen() {
               </li>
             ))}
           </ol>
+        </section>
+
+        <section
+          className="mt-4 flex items-start gap-2.5 rounded-card border p-4"
+          style={{
+            backgroundColor: 'hsl(var(--menta) / 0.10)',
+            borderColor: 'hsl(var(--menta) / 0.32)',
+          }}
+        >
+          <span className="text-base">🎥</span>
+          <p className="text-[12px] leading-[1.45] text-text-primary/90">
+            Um <strong>vídeo de orientação</strong> te guia no preparo, passo a passo. Você não
+            monta nada sozinho — e <strong>não desmonte o kit</strong>: é só dormir e devolver no
+            dia seguinte.
+          </p>
         </section>
       </div>
 

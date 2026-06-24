@@ -42,7 +42,7 @@ const MODALITIES = [
     tag: 'Mais cômodo',
     title: 'Receber o kit em casa',
     desc: 'O kit chega à sua casa em até 48h. Um técnico orienta por videochamada e os dados são enviados em tempo real.',
-    bullets: ['Sem sair de casa', 'Orientação por vídeo', 'Logística de ida e volta inclusa'],
+    bullets: ['Sem sair de casa', 'Vídeo de orientação + preparo guiado', 'Logística de ida e volta inclusa'],
     to: '/polisso-movel/confirmacao-envio',
   },
 ];

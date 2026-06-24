@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Watch } from 'lucide-react';
 import TextLink from '@/components/primitives/TextLink.jsx';
+import { WEARABLE_NOTE } from '@/lib/positioning.js';
 
 const PLATFORMS = [
   { id: 'apple', name: 'Apple Watch', sub: 'Series 5 ou superior' },
@@ -36,6 +37,16 @@ export default function SelectPlatformScreen() {
         <p className="mt-3 text-[15px] leading-[1.45] text-baunilha/70">
           Suportamos Apple Watch Series 5+ e Samsung Galaxy Watch 4+.
         </p>
+        <div
+          className="mt-4 flex items-start gap-2.5 rounded-card border p-3.5"
+          style={{
+            backgroundColor: 'hsl(var(--menta) / 0.10)',
+            borderColor: 'hsl(var(--menta) / 0.32)',
+          }}
+        >
+          <Watch size={15} className="mt-0.5 shrink-0 text-menta" />
+          <p className="text-[12px] leading-[1.45] text-text-primary/85">{WEARABLE_NOTE}</p>
+        </div>
 
         <div className="mt-6 space-y-3.5">
           {PLATFORMS.map((p) => (

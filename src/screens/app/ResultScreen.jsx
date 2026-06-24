@@ -7,7 +7,9 @@ import RiskBadge from '@/components/primitives/RiskBadge.jsx';
 import ScoreBar from '@/components/primitives/ScoreBar.jsx';
 import { useSleepState } from '@/state/SleepStateContext.jsx';
 import { comingSoon } from '@/lib/demoToast.js';
-import { DISCLAIMER } from '@/lib/positioning.js';
+import { DISCLAIMER, VALIDATION } from '@/lib/positioning.js';
+import SourceNote from '@/components/primitives/SourceNote.jsx';
+import { REF_WEARABLE, REF_DURATION } from '@/lib/references.js';
 
 const RISK_HEX = {
   low: { var: 'risk-low' },
@@ -217,8 +219,9 @@ export default function ResultScreen() {
               : 'Atualizar dados do relógio'}
         </button>
         <p className="px-4 text-center text-[11px] leading-[1.4] text-baunilha/45">
-          {DISCLAIMER.footer}
+          {DISCLAIMER.footer} · {VALIDATION.badge}
         </p>
+        <SourceNote className="w-full px-2" sources={[...REF_WEARABLE, ...REF_DURATION]} />
       </div>
     </div>
   );

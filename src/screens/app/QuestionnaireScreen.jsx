@@ -6,12 +6,26 @@ import PrimaryButton from '@/components/primitives/PrimaryButton.jsx';
 import TextLink from '@/components/primitives/TextLink.jsx';
 import { useSleepState } from '@/state/SleepStateContext.jsx';
 import { SLEEP_COMPLAINTS } from '@/data/mockRepository.js';
+import { instrumentsFor } from '@/data/triagem.js';
 import { cn } from '@/lib/utils.js';
 
 export default function QuestionnaireScreen() {
   const navigate = useNavigate();
   const { submitQuestionnaire } = useSleepState();
-  const [complaint, setComplaint] = useState(null);
+  const [complaints, setComplaints] = useState([]);
+
+  // Multi-seleção: a pessoa pode ter mais de uma queixa (feedback Dr. Gustavo).
+  // "Nenhuma queixa" é exclusiva.
+  const toggleComplaint = (val) =>
+    setComplaints((prev) => {
+      if (val === 'none') return prev.includes('none') ? [] : ['none'];
+      const without = prev.filter((v) => v !== 'none');
+      return without.includes(val)
+        ? without.filter((v) => v !== val)
+        : [...without, val];
+    });
+
+  const plannedCount = instrumentsFor(complaints).length;
 
   // Para o protótipo é uma pergunta. O backlog prevê até 9.
   const currentIndex = 0;
@@ -19,8 +33,8 @@ export default function QuestionnaireScreen() {
   const progressPercent = ((currentIndex + 1) / totalQuestions) * 100;
 
   const handleContinue = () => {
-    if (!complaint) return;
-    submitQuestionnaire({ complaint, history: [] });
+    if (!complaints.length) return;
+    submitQuestionnaire({ complaints, history: [] });
     navigate('/app/result');
   };
 
@@ -68,7 +82,7 @@ export default function QuestionnaireScreen() {
           O que mais te incomoda no seu sono hoje?
         </h1>
         <p className="mt-3 text-[13px] leading-[1.45] text-baunilha/55">
-          Escolha a alternativa que mais se aproxima.
+          Selecione todas que se aplicam — pode ser mais de uma.
         </p>
       </section>
 
@@ -78,8 +92,8 @@ export default function QuestionnaireScreen() {
           <li key={opt.value}>
             <OptionCard
               option={opt}
-              selected={complaint === opt.value}
-              onSelect={() => setComplaint(opt.value)}
+              selected={complaints.includes(opt.value)}
+              onSelect={() => toggleComplaint(opt.value)}
             />
           </li>
         ))}
@@ -89,9 +103,18 @@ export default function QuestionnaireScreen() {
 
       {/* Footer */}
       <div className="flex flex-col items-center gap-3 px-6 pt-3 pb-6">
+        {complaints.length > 0 && !complaints.includes('none') && (
+          <p className="text-center text-[12px] leading-[1.4] text-baunilha/55">
+            Sua triagem terá{' '}
+            <strong className="text-baunilha/85">
+              {plannedCount} questionário{plannedCount > 1 ? 's' : ''}
+            </strong>
+            , direcionado{plannedCount > 1 ? 's' : ''} pela sua queixa.
+          </p>
+        )}
         <PrimaryButton
           trailingIcon="→"
-          disabled={!complaint}
+          disabled={!complaints.length}
           onClick={handleContinue}
         >
           Continuar

@@ -80,7 +80,9 @@ export default function KitReceivedScreen() {
         >
           <Lightbulb size={18} className="mt-0.5 shrink-0 text-sun-moon" />
           <p className="text-[13px] leading-[1.45] text-baunilha/85">
-            Não use ainda — aguarde a orientação do técnico para garantir resultado válido.
+            Não monte ainda — assista ao vídeo de orientação e siga o técnico no passo a passo.
+            Depois de instalado, <strong>não desmonte o kit</strong>: é só dormir e devolver no
+            dia seguinte.
           </p>
         </section>
       </div>

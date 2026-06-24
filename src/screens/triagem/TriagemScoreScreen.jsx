@@ -3,35 +3,44 @@ import { ChevronLeft } from 'lucide-react';
 import PrimaryButton from '@/components/primitives/PrimaryButton.jsx';
 import RiskBadge from '@/components/primitives/RiskBadge.jsx';
 import TextLink from '@/components/primitives/TextLink.jsx';
+import { useSleepState } from '@/state/SleepStateContext.jsx';
+import { instrumentsFor } from '@/data/triagem.js';
+import { REFERENCES } from '@/lib/references.js';
+import { VALIDATION } from '@/lib/positioning.js';
+import SourceNote from '@/components/primitives/SourceNote.jsx';
 
 /**
  * 06.6 Score consolidado da triagem.
  * Figma 59:368.
  */
 const SCORES = [
-  { value: '9', label: 'ESS', color: 'text-primary' },
-  { value: '5', label: 'STOP-BANG', color: 'laranja' },
-  { value: '11', label: 'ISI', color: 'risk-moderate' },
-  { value: '9', label: 'PSQI', color: 'sun-moon' },
+  { id: 'epworth', value: '9', label: 'ESS', color: 'text-primary' },
+  { id: 'stopbang', value: '5', label: 'STOP-BANG', color: 'laranja' },
+  { id: 'isi', value: '11', label: 'ISI', color: 'risk-moderate' },
+  { id: 'pittsburgh', value: '9', label: 'PSQI', color: 'sun-moon' },
 ];
 
 const INTERPRETATIONS = [
   {
+    id: 'epworth',
     color: 'menta',
     title: 'ESS 9 · Sonolência leve',
     body: 'Vale apenas acompanhar',
   },
   {
+    id: 'stopbang',
     color: 'laranja',
     title: 'STOP-BANG 5 · Vários indícios de apneia',
     body: 'Sugere investigar com polissonografia',
   },
   {
+    id: 'isi',
     color: 'risk-moderate',
     title: 'ISI 11 · Sinais moderados de insônia',
     body: 'Um especialista pode orientar a conduta',
   },
   {
+    id: 'pittsburgh',
     color: 'sun-moon',
     title: 'PSQI · Sono percebido como razoável',
     body: 'Difere dos dados objetivos do relógio',
@@ -40,6 +49,12 @@ const INTERPRETATIONS = [
 
 export default function TriagemScoreScreen() {
   const navigate = useNavigate();
+  const { questionnaire } = useSleepState();
+  const planIds = instrumentsFor(questionnaire?.complaints);
+  const scores = SCORES.filter((s) => planIds.includes(s.id));
+  const interpretations = INTERPRETATIONS.filter((i) => planIds.includes(i.id));
+  const REF_KEY = { epworth: 'epworth', stopbang: 'stopbang', isi: 'isi', pittsburgh: 'psqi' };
+  const refs = planIds.map((id) => REFERENCES[REF_KEY[id]]).filter(Boolean);
 
   return (
     <div className="flex h-full flex-col">
@@ -69,9 +84,12 @@ export default function TriagemScoreScreen() {
             Os indícios sugerem que vale conversar com um especialista — uma polissonografia
             pode esclarecer. Esta triagem não é um diagnóstico.
           </p>
+          <span className="mt-3 inline-block rounded-pill bg-menta/15 px-3 py-1 text-[10px] font-bold uppercase tracking-kicker text-menta">
+            {VALIDATION.badge}
+          </span>
           <div className="my-5 h-px w-full bg-surface-2" />
           <div className="flex items-end justify-between">
-            {SCORES.map((s) => (
+            {scores.map((s) => (
               <div key={s.label} className="flex flex-col items-center gap-1">
                 <span
                   className="text-[22px] font-bold"
@@ -93,7 +111,7 @@ export default function TriagemScoreScreen() {
             Interpretação por instrumento
           </p>
           <div className="mt-3 flex flex-col gap-3.5">
-            {INTERPRETATIONS.map((item) => (
+            {interpretations.map((item) => (
               <div key={item.title} className="flex items-start gap-2.5">
                 <span
                   className="mt-0.5 h-9 w-1.5 shrink-0 rounded-[3px]"
@@ -127,6 +145,8 @@ export default function TriagemScoreScreen() {
             revisa, sugere CID-10 e indica clínica.
           </p>
         </section>
+
+        <SourceNote className="mt-4" sources={refs} />
       </div>
 
       <footer className="flex flex-col items-center gap-3 px-5 pb-5 pt-3">

@@ -15,7 +15,7 @@ const SOURCES = [
     color: 'menta',
     who: 'Dr. Marcos Rocha',
     role: 'Avaliação médica',
-    text: 'Os achados da consulta e da triagem indicam investigar apneia. Recomendo polissonografia para confirmar e medir a gravidade.',
+    text: 'Os achados indicam investigar apneia. Recomendo polissonografia tipo III (portátil), feita em casa com vídeo de orientação, para confirmar e medir a gravidade.',
   },
   {
     id: 'algoritmo',

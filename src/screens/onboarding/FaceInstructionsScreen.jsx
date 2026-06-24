@@ -6,7 +6,7 @@ import TextLink from '@/components/primitives/TextLink.jsx';
 const TIPS = [
   'Ambiente bem iluminado',
   'Rosto sem óculos ou maquiagem pesada',
-  'Olhe direto para a câmera',
+  'Duas fotos rápidas: frontal e de perfil',
 ];
 
 export default function FaceInstructionsScreen() {
@@ -26,9 +26,11 @@ export default function FaceInstructionsScreen() {
             <br />
             pra concluir
           </h1>
-          <p className="mx-auto mt-3 max-w-[320px] text-[15px] leading-[1.45] text-baunilha/70">
-            Vamos extrair marcadores anatômicos que ajudam a avaliar indícios
-            de distúrbios respiratórios do sono.
+          <p className="mx-auto mt-3 max-w-[330px] text-[15px] leading-[1.45] text-baunilha/70">
+            Marcadores anatômicos — mandíbula (retrognatia), nariz e
+            circunferência do pescoço — que ajudam a avaliar indícios
+            respiratórios do sono. É um{' '}
+            <strong className="text-baunilha/90">sinal complementar</strong>, nunca a base única.
           </p>
         </div>
 
@@ -58,7 +60,7 @@ export default function FaceInstructionsScreen() {
         <PrimaryButton onClick={() => navigate('/onboarding/face/camera')}>
           Permitir câmera
         </PrimaryButton>
-        <TextLink>Como funciona?</TextLink>
+        <TextLink onClick={() => navigate('/metodologia')}>Como funciona?</TextLink>
       </div>
     </div>
   );

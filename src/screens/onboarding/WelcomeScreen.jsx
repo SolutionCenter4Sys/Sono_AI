@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import PrimaryButton from '@/components/primitives/PrimaryButton.jsx';
 import TextLink from '@/components/primitives/TextLink.jsx';
 import MoonIcon from '@/components/icons/MoonIcon.jsx';
+import { AUDIENCE } from '@/lib/positioning.js';
 
 const STEPS = [
   'Consentimento LGPD — você no controle dos seus dados',
@@ -50,6 +51,9 @@ export default function WelcomeScreen() {
         <p className="mx-auto mt-3 max-w-[320px] text-[15px] leading-[1.45] text-baunilha/70">
           Vamos configurar seu perfil clínico para que o algoritmo analise seu
           sono com a maior precisão possível.
+        </p>
+        <p className="mx-auto mt-3 max-w-[320px] text-[13px] font-medium leading-[1.45] text-menta/90">
+          {AUDIENCE.tagline}
         </p>
       </div>
 

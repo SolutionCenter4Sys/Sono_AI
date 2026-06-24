@@ -87,6 +87,9 @@ import DeviceScreen from '@/screens/dispositivo/DeviceScreen.jsx';
 // Pré-diagnóstico algorítmico (ADR-024)
 import PreDiagnosisAlertScreen from '@/screens/pre-diagnostico/PreDiagnosisAlertScreen.jsx';
 
+// Metodologia / Como funciona
+import MetodologiaScreen from '@/screens/metodologia/MetodologiaScreen.jsx';
+
 // Acompanhamento pós-laudo (ADR-028)
 import AcompanhamentoScreen from '@/screens/acompanhamento/AcompanhamentoScreen.jsx';
 import ReturnDetailScreen from '@/screens/acompanhamento/ReturnDetailScreen.jsx';
@@ -181,6 +184,9 @@ export default function AppRoutes() {
 
         {/* Dispositivo / relógio */}
         <Route path="/dispositivo" element={<DeviceScreen />} />
+
+        {/* Metodologia / Como funciona */}
+        <Route path="/metodologia" element={<MetodologiaScreen />} />
 
         {/* Pré-diagnóstico algorítmico (ADR-024) */}
         <Route path="/pre-diagnostico" element={<PreDiagnosisAlertScreen />} />

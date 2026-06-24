@@ -136,6 +136,9 @@ export default function SleepCoinsScreen() {
           <p className="mt-2 text-[13px] leading-[1.5] text-baunilha/65">
             {hygiene.comparison.message}
           </p>
+          <p className="mt-2 text-[10px] text-baunilha/40">
+            Comparativo ilustrativo · base normativa por faixa etária em validação.
+          </p>
         </section>
 
         {/* Fatores de higiene */}

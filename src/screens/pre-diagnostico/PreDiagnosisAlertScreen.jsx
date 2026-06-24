@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import PrimaryButton from '@/components/primitives/PrimaryButton.jsx';
 import TextLink from '@/components/primitives/TextLink.jsx';
+import SourceNote from '@/components/primitives/SourceNote.jsx';
+import { REF_WEARABLE, REF_DURATION } from '@/lib/references.js';
 
 /**
  * /pre-diagnostico · Pré-diagnóstico algorítmico (ADR-024 · WEB-EP-09-FT-04).
@@ -170,6 +172,8 @@ export default function PreDiagnosisAlertScreen() {
             ))}
           </div>
         </section>
+
+        <SourceNote className="mt-4" sources={[...REF_WEARABLE, ...REF_DURATION]} />
       </div>
 
       <footer className="flex flex-col items-center gap-3 px-6 pb-5 pt-3">

@@ -33,6 +33,26 @@ export const DISCLAIMER = {
   footer: 'Resultado indicativo · não substitui avaliação médica.',
 };
 
+/** Status de validação clínica — exibido enquanto não há validação publicada. */
+export const VALIDATION = {
+  badge: 'Em validação clínica',
+  note: 'Algoritmos em validação clínica contra padrão-ouro (polissonografia do Instituto do Sono / AFIP). Resultados ilustrativos até a conclusão do estudo.',
+};
+
+/** Posicionamento de público: cuidado integrado, não nicho (atleta/idoso). */
+export const AUDIENCE = {
+  tagline: 'O sono como pilar do envelhecimento saudável — junto de dieta e exercício.',
+  note: 'Para qualquer pessoa que cuida da saúde de forma integrada. Distúrbios do sono são fator de risco para doenças do coração ao cérebro.',
+};
+
+/** Requisito de sensor para estimar indícios de apneia. */
+export const WEARABLE_NOTE =
+  'Para estimar indícios de apneia, o relógio precisa medir frequência cardíaca e/ou oximetria (SpO₂).';
+
+/** Papel da análise facial na triagem (sinal auxiliar, nunca isolado). */
+export const FACIAL_NOTE =
+  'A análise facial é um sinal complementar — mandíbula/retrognatia, nariz e circunferência do pescoço. Nunca a base única do indício.';
+
 /** Orientação textual por perfil (substitui buildRecommendation clínica). */
 export function guidanceFor(level) {
   switch (level) {

@@ -2,20 +2,18 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ClipboardList } from 'lucide-react';
 import PrimaryButton from '@/components/primitives/PrimaryButton.jsx';
 import TextLink from '@/components/primitives/TextLink.jsx';
+import { useSleepState } from '@/state/SleepStateContext.jsx';
+import { instrumentsFor, instrumentById } from '@/data/triagem.js';
 
 /**
- * 06.1 Intro triagem — visão geral dos 4 instrumentos.
+ * 06.1 Intro triagem — instrumentos direcionados pela(s) queixa(s) do paciente.
  * Figma 59:3.
  */
-const INSTRUMENTS = [
-  { n: '1', color: 'menta', title: 'Epworth (ESS)', hint: '8 perguntas · sonolência diurna' },
-  { n: '2', color: 'laranja', title: 'STOP-BANG', hint: '8 perguntas SIM/NÃO · indícios de apneia' },
-  { n: '3', color: 'risk-moderate', title: 'ISI', hint: '7 perguntas · severidade insônia' },
-  { n: '4', color: 'baunilha', title: 'Pittsburgh (PSQI)', hint: 'qualidade subjetiva geral' },
-];
-
 export default function TriagemIntroScreen() {
   const navigate = useNavigate();
+  const { questionnaire } = useSleepState();
+  const plan = instrumentsFor(questionnaire?.complaints).map(instrumentById);
+  const count = plan.length;
 
   return (
     <div className="flex h-full flex-col">
@@ -58,10 +56,11 @@ export default function TriagemIntroScreen() {
           <p className="text-[11px] font-semibold uppercase tracking-kicker text-menta">
             Triagem clínica
           </p>
-          <h1 className="mt-2 text-[26px] font-bold leading-tight">4 questionários · 5 minutos</h1>
+          <h1 className="mt-2 text-[26px] font-bold leading-tight">
+            {count} questionário{count > 1 ? 's' : ''} · direcionado{count > 1 ? 's' : ''}
+          </h1>
           <p className="mx-auto mt-3 max-w-[320px] text-[14px] leading-[1.5] text-baunilha/65">
-            Avalia sonolência, indícios de apneia, insônia e qualidade subjetiva do sono.
-            Instrumentos validados clinicamente.
+            Selecionados a partir da sua queixa — instrumentos validados clinicamente.
           </p>
         </div>
 
@@ -71,8 +70,8 @@ export default function TriagemIntroScreen() {
             O que vamos aplicar
           </p>
           <ul className="mt-4 flex flex-col gap-3.5">
-            {INSTRUMENTS.map((item) => (
-              <li key={item.n} className="flex items-center gap-3">
+            {plan.map((item, i) => (
+              <li key={item.id} className="flex items-center gap-3">
                 <span
                   className="grid h-8 w-8 shrink-0 place-items-center rounded-2xl border text-[14px] font-bold"
                   style={{
@@ -81,7 +80,7 @@ export default function TriagemIntroScreen() {
                     color: `hsl(var(--${item.color}))`,
                   }}
                 >
-                  {item.n}
+                  {i + 1}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[14px] font-semibold text-text-primary/95">
@@ -110,7 +109,7 @@ export default function TriagemIntroScreen() {
       </div>
 
       <footer className="flex flex-col items-center gap-3 px-6 pb-5 pt-3">
-        <PrimaryButton leadingIcon="→" onClick={() => navigate('/triagem/epworth')}>
+        <PrimaryButton leadingIcon="→" onClick={() => navigate(plan[0]?.route ?? '/triagem/epworth')}>
           Começar triagem
         </PrimaryButton>
         <TextLink onClick={() => navigate(-1)}>Fazer depois</TextLink>

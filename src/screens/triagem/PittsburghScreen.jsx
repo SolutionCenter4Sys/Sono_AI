@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import { useSleepState } from '@/state/SleepStateContext.jsx';
+import { resolvePlan, nextStep } from '@/data/triagem.js';
 
 /**
  * 06.5 Pittsburgh (PSQI) — qualidade subjetiva.
@@ -22,11 +24,14 @@ const FIELDS = [
 
 export default function PittsburghScreen() {
   const navigate = useNavigate();
+  const { questionnaire } = useSleepState();
+  const ids = resolvePlan(questionnaire?.complaints, 'pittsburgh');
+  const next = nextStep(ids, 'pittsburgh');
   const [rating, setRating] = useState(2);
 
   return (
     <div className="flex h-full flex-col">
-      <TopBarProgress navigate={navigate} step={4} />
+      <TopBarProgress navigate={navigate} step={ids.indexOf('pittsburgh') + 1} total={ids.length} />
 
       <div className="flex-1 overflow-y-auto px-6 pb-6">
         <p className="text-[11px] font-semibold uppercase tracking-kicker text-menta">
@@ -96,18 +101,18 @@ export default function PittsburghScreen() {
       <footer className="px-6 pb-5 pt-3">
         <button
           type="button"
-          onClick={() => navigate('/triagem/score')}
+          onClick={() => navigate(next.route)}
           className="flex w-full items-center justify-center gap-2 rounded-button bg-laranja py-3.5 text-base font-semibold text-text-on-brand shadow-cta"
         >
-          Ver resultado consolidado <span>→</span>
+          {next.label} <span>→</span>
         </button>
       </footer>
     </div>
   );
 }
 
-function TopBarProgress({ navigate, step }) {
-  const percent = (step / 4) * 100;
+function TopBarProgress({ navigate, step, total }) {
+  const percent = (step / total) * 100;
   return (
     <div>
       <header className="flex items-center justify-between px-4 pt-4 pb-2">
@@ -120,7 +125,7 @@ function TopBarProgress({ navigate, step }) {
           <ChevronLeft size={20} strokeWidth={2.4} />
         </button>
         <span className="text-[12px] font-semibold uppercase tracking-kicker text-baunilha/70">
-          Questionário {step} de 4
+          Questionário {step} de {total}
         </span>
         <span className="h-10 w-10" aria-hidden />
       </header>

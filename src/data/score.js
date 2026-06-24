@@ -63,11 +63,25 @@ export function buildFindings(session, questionnaire) {
     );
   }
 
-  if (questionnaire?.complaint === 'snoring') {
+  const complaints = Array.isArray(questionnaire?.complaints)
+    ? questionnaire.complaints
+    : questionnaire?.complaint
+      ? [questionnaire.complaint]
+      : [];
+  if (complaints.includes('snoring')) {
     findings.push('Ronco alto reportado no questionário');
   }
-  if (questionnaire?.complaint === 'tired') {
+  if (complaints.includes('tired')) {
     findings.push('Sensação de cansaço ao acordar relatada no questionário');
+  }
+  if (complaints.includes('daytime-sleepiness')) {
+    findings.push('Sonolência diurna relatada no questionário');
+  }
+  if (complaints.includes('latency')) {
+    findings.push('Dificuldade para iniciar o sono relatada no questionário');
+  }
+  if (complaints.includes('fragmented')) {
+    findings.push('Despertares noturnos frequentes relatados no questionário');
   }
 
   if ((session.efficiency ?? 100) < 85 && (session.fragmentation ?? 0) > 3) {
